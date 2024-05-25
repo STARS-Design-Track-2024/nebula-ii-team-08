@@ -32,7 +32,6 @@ module sample_team_proj (
     // Internal signals
     logic clk_pulse;
     logic [5:0] count;
-    logic [5:0] decoder_in;
 
     // Clock divider
     flex_counter #(.NUM_CNT_BITS(28)) clk_divider (
@@ -57,15 +56,8 @@ module sample_team_proj (
 
     // Decoder instantiation
     decoder_for_GPIO decoder (
-        .in(decoder_in),
+        .in(count),
         .out(gpio)
     );
-
-    // Logic for decoder input
-    always_comb begin
-        decoder_in = '0;
-        if (count > '0 && count < 6'd35)
-            decoder_in = count - 1;
-    end
 
 endmodule
