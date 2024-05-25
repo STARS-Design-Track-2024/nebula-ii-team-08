@@ -10,8 +10,8 @@ module flex_counter # (
 (
     input logic clk, nrst,
     input logic count_enable, clear,
-    input logic [NUM_CNT_BITS-1] rollover_val,
-    input logic [NUM_CNT_BITS-1] count_out,
+    input logic [NUM_CNT_BITS-1:0] rollover_val,
+    output logic [NUM_CNT_BITS-1:0] count_out,
     output logic rollover_flag
 );
     // Internal signals
@@ -32,19 +32,17 @@ module flex_counter # (
     // Next Count & Next Flag Logic
     always_comb begin
         // Next count logic
+        next_count = count_out;
         if (clear)
             next_count = '0;
         else if (count_enable) begin
-            if (rollover_val == '0) {
-                next_count = '0;
-            }
-            else if (count < rollover_val)
+            if (rollover_val == '0)
+                next_count = 0;
+            else if (count_out < rollover_val)
                 next_count = count_out + 1;
-            else if (count == rollover_val)
+            else if (count_out == rollover_val)
                 next_count = 1;
         end
-        else
-            next_count = count;
 
         // Next flag logic
         if (next_count == rollover_val)

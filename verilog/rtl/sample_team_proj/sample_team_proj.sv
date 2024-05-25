@@ -39,8 +39,9 @@ module sample_team_proj (
         .nrst(nrst),
         .count_enable(enable),
         .clear(stop),
-        .rollover_val(prescaler * 10000),  // there are 10^4 clock cycles in 1 ms
-        .rollover_flag(clk_pulse)
+        .rollover_val({14'd0, prescaler} * 28'd10000),  // there are 10^4 clock cycles in 1 ms
+        .rollover_flag(clk_pulse),
+        .count_out()
     );
 
     // Counter
