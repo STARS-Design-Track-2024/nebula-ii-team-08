@@ -5,18 +5,24 @@
 // Description: Sample Team Project
 
 /*
-* This sample project cycles through each of the 34 available GPIO
-* pins, setting the pin output high one at a time in sequence.
+* This sample project consists of a design that cycles through each of the
+* 34 available GPIO pins, setting the pin output on and off, one at
+* a time, in sequence.
 *
-* This output cycling is active when "enable" is high, and ends when
-* "stop" is high (stop has priority over start).
+* This output cycling is active when "enable" is high, and stops when
+* "stop" is high (stop has priority over enable). The LA probes are
+* used to supply these 2 signals.
 *
-* The "prescaler" controls the cycling period (i.e., how long the
-* output of each GPIO pin stays high). A prescaler value of 1 means
-* that each pin is set high for 1 ms.
+* The "prescaler" value controls the cycling period (i.e., how long the
+* output of each GPIO pin stays high). This value is programmed
+* through the wishbone bus. A prescaler value of 1 means that each pin
+* is set high for 1 ms. Similarly, a prescaler value of 1000 means that
+* each pin is set high for 1 s.
 * 
-* "Done" indicates when the last pin output has gone high.
-* Is is used as an interrupt to the management core.
+* "Done" goes high after the last pin output turns off.
+* It is used as an interrupt to the management core. Each pin
+* should have gone high for the same amount of time
+* (one after the other) before the interrupt is raised.
 * 
 */
 
@@ -24,7 +30,7 @@
 
 module sample_team_proj (
     input logic clk, nrst, // clock rate is 10 MHz
-    input logic enable, stop, // from logic analyzer - turn cycling on and off
+    input logic enable, stop, // from Logic Analyzer (LA) - active/deactivate cycling
     input logic [13:0] prescaler,  // from Wishbone bus - controls period per pin in the sequence
     output logic done,  // set as interrupt
     output logic [33:0] gpio // breakout board pins (outputs)
@@ -45,12 +51,12 @@ module sample_team_proj (
     );
 
     // Counter
-    flex_counter #(.NUM_CNT_BITS(6)) counter_to_34 (
+    flex_counter #(.NUM_CNT_BITS(6)) counter_to_35 (
         .clk(clk),
         .nrst(nrst),
         .count_enable(clk_pulse),
         .clear(stop),
-        .rollover_val(6'd34),
+        .rollover_val(6'd35),  // interrupt is raised when count is 35
         .count_out(count),
         .rollover_flag(done)
     );

@@ -16,7 +16,7 @@ module flex_counter # (
 );
     // Internal signals
     logic [NUM_CNT_BITS-1:0] next_count;  // next count
-    logic next_flag;  //  next rollover_flag
+    logic next_flag;  // next rollover flag
 
     // Count and Flag Registers
     always_ff @(posedge clk, negedge nrst) begin
@@ -41,11 +41,11 @@ module flex_counter # (
             else if (count_out < rollover_val)
                 next_count = count_out + 1;
             else if (count_out == rollover_val)
-                next_count = 1;
+                next_count = 1;  // counter rolls over back to 1
         end
 
         // Next flag logic
-        if (next_count == rollover_val)
+        if (next_count == rollover_val && rollover_val != '0)  // flag should be low when rollover_val is 0
             next_flag = 1'b1;
         else
             next_flag = 1'b0;
