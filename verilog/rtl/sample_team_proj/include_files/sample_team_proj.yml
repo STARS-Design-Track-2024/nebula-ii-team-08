@@ -1,0 +1,76 @@
+---
+info:
+  name: sample_team_proj
+  description: Sample Team Project for STARS students
+  repo: STARS-Design-Track-2024/Project_Template.git
+  owner: Purdue University
+  license: APACHE 2.0
+  author: Miguel Isrrael Teran
+  email: misrrael@purdue.edu
+  version: v1.0.0
+  date: 28-05-2024
+  category: digital
+  tags:
+    - counter
+    - sample project
+  bus:
+    - wb
+  type: soft
+  status: verified
+  qualification: N/A
+  cell_count: N/A
+  width: 0.0
+  height: 0.0
+  technology: N/A
+  clock_freq_mhz: 10
+  digital_supply_voltage: n/a
+  analog_supply_voltage: n/a
+
+ports:
+  - name: prescaler
+    width: 14
+    direction: input
+    description: Controls period per pin in the sequence
+  - name: done
+    width: 1
+    direction: output
+    description: Indicates all GPIO pins have gone high at least once
+
+clock:
+  name: clk
+
+reset:
+  name: nrst
+  level: 0
+
+external_interface:
+  - name: enable
+    port: enable
+    direction: input
+    width: 1
+    description: actives cycling of GPIO outputs
+  - name: stop
+    port: stop
+    direction: input
+    width: 1
+    description: stops and clears cycling sequence
+  - name: gpio
+    port: gpio
+    direction: output
+    width: 34
+    description: GPIO output pins
+
+registers:
+  - name: PRESCALER_VAL
+    size: 14
+    mode: w
+    fifo: false
+    offset: 0
+    bit_access: false
+    write_port: prescaler
+    description: Register for input prescaler value
+
+flags:
+  - name: DONE_ASSERT
+    port: done
+    description: Cycling of GPIOs is done
