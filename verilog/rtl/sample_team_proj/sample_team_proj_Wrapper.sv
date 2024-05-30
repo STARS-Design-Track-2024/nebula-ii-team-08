@@ -11,6 +11,9 @@ module sample_team_proj_Wrapper (
     inout vssd1,	// User area 1 digital ground
 `endif
 
+    // Chip Select (Active Low)
+    input wire ncs,
+
     // Wishbone Slave ports (WB MI A)
     input wire wb_clk_i,
     input wire wb_rst_i,
@@ -23,8 +26,7 @@ module sample_team_proj_Wrapper (
     output wire wbs_ack_o,
     output wire [31:0] wbs_dat_o,
 
-    // Logic Analyzer - 2 pins + chip select
-    input wire ncs, // Chip Select (Active Low)
+    // Logic Analyzer - 2 pins used here
     input wire [1:0] la_data_in,
     output wire [1:0] la_data_out,
     input wire [1:0] la_oenb,
