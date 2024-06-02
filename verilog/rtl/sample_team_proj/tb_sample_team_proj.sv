@@ -36,6 +36,12 @@ module tb_sample_team_proj();
         #(CLK_PERIOD / 2.0);
     end
 
+    // Signal Dump
+    initial begin
+        $dumpfile ("dump.vcd");
+        $dumpvars;
+    end
+
     // DUT Portmap
     sample_team_proj DUT (
         .clk(tb_clk),

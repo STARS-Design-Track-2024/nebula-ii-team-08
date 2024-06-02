@@ -114,6 +114,12 @@ module tb_flex_counter();
         #(CLK_PERIOD/2.0);
     end
     
+    // Signal Dump
+    initial begin
+        $dumpfile ("dump.vcd");
+        $dumpvars;
+    end
+    
     // DUT Port map
     flex_counter DUT(.clk(tb_clk), .nrst(tb_nrst), .clear(tb_clear), .count_enable(tb_count_enable), .rollover_val(tb_rollover_val),
                         .count_out(tb_count_out), .rollover_flag(tb_rollover_flag));

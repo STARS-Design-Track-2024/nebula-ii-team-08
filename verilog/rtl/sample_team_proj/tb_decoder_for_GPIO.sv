@@ -32,6 +32,12 @@ module tb_decoder_for_GPIO();
     // Instantiate DUT
     decoder_for_GPIO DUT(.in(tb_in), .out(tb_out));
 
+    // Signal Dump
+    initial begin
+        $dumpfile ("dump.vcd");
+        $dumpvars;
+    end
+
     // Main test bench process
     initial
     begin
