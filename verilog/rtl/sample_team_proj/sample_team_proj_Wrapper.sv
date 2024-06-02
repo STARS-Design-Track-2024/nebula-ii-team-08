@@ -51,7 +51,7 @@ module sample_team_proj_Wrapper (
     // Assign gpio_oeb outputs
     assign gpio_oeb = 34'b0;  // using all GPIO pins as outputs
 
-    // Instatiate the top level in BusWrap here
+    // Instatiate the "Bus Wrapper" here
     sample_team_proj_WB DESIGN (
     `ifdef USE_POWER_PINS
         .vccd1(vccd1),	// User area 1 1.8V power
