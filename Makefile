@@ -151,6 +151,20 @@ docker_run_verify=\
 		efabless/dv:latest \
 		sh -c $(verify_command)
 
+custom_run_verify =\
+    export TARGET_PATH=${TARGET_PATH} &&\
+    export PDK_ROOT=${PDK_ROOT} &&\
+    export CARAVEL_ROOT=${CARAVEL_ROOT} &&\
+    export DESIGNS=$(TARGET_PATH) &&\
+    export USER_PROJECT_VERILOG=$(TARGET_PATH)/verilog &&\
+    export PDK=$(PDK) &&\
+    export CORE_VERILOG_PATH=$(TARGET_PATH)/mgmt_core_wrapper/verilog &&\
+    export CARAVEL_VERILOG_PATH=$(TARGET_PATH)/caravel/verilog &&\
+    export MCW_ROOT=$(MCW_ROOT) &&\
+	export GCC_PREFIX=riscv64-unknown-elf &&\
+	export GCC_PATH=/package/riscv-gnu-toolchain/bin/ &&\
+    cd verilog/dv/$* && export SIM=${SIM} && make
+
 .PHONY: harden
 harden: $(blocks)
 
@@ -166,9 +180,12 @@ verify-all-gl: $(dv-targets-gl)
 .PHONY: verify-all-gl-sdf
 verify-all-gl-sdf: $(dv-targets-gl-sdf)
 
-$(dv-targets-rtl): SIM=RTL
-$(dv-targets-rtl): verify-%-rtl: $(dv_base_dependencies)
-	$(docker_run_verify)
+# $(dv-targets-rtl): SIM=RTL
+# $(dv-targets-rtl): verify-%-rtl: $(dv_base_dependencies)
+# 	$(docker_run_verify)
+
+$(dv-targets-rtl): verify-%-rtl: zicsr_fix
+	@$(custom_run_verify) || ( echo "Please check to ensure march=rv32i_zicsr not march=rv32i: mgmt_core_wrapper/verilog/dv/make/var.makefile"; exit 1 )
 
 $(dv-targets-gl): SIM=GL
 $(dv-targets-gl): verify-%-gl: $(dv_base_dependencies)
@@ -427,3 +444,8 @@ caravel-sta: ./env/spef-mapping.tcl
 	@echo "You can find results for all corners in $(CUP_ROOT)/signoff/caravel/openlane-signoff/timing/"
 	@echo "Check summary.log of a specific corner to point to reports with reg2reg violations" 
 	@echo "Cap and slew violations are inside summary.log file itself"
+
+.PHONY: zicsr_fix
+zicsr_fix:
+	cd $(MCW_ROOT)/verilog/dv/make &&\
+	sed -i.bak 's/rv32i /rv32i_zicsr /g' var.makefile
