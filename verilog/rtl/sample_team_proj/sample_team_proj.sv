@@ -1,3 +1,4 @@
+// STARS STUDENTS: ADD YOUR DESIGN HERE
 // $Id: $
 // File name:   sample_team_proj.sv
 // Created:     5/23/2024

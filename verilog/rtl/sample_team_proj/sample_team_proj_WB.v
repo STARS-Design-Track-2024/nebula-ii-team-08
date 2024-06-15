@@ -19,11 +19,12 @@
 
 /* THIS FILE IS GENERATED, DO NOT EDIT */
 
+`timescale			1ns/1ps
 `default_nettype	none
 
 `define				WB_AW		16
 
-`include			"include_files/wb_wrapper.vh"
+`include			"wb_wrapper.vh"
 
 module sample_team_proj_WB (
 	`WB_SLAVE_PORTS,
@@ -82,11 +83,11 @@ module sample_team_proj_WB (
 	);
 
 	assign	dat_o = 
-			(adr_i[`WB_AW-1:0] == PRESCALER_VAL_REG_OFFSET)	? {18'b0, PRESCALER_VAL_REG} :
-			(adr_i[`WB_AW-1:0] == IM_REG_OFFSET)	? {31'b0, IM_REG} :
-			(adr_i[`WB_AW-1:0] == MIS_REG_OFFSET)	? {31'b0, MIS_REG} :
-			(adr_i[`WB_AW-1:0] == RIS_REG_OFFSET)	? {31'b0, RIS_REG} :
-			(adr_i[`WB_AW-1:0] == IC_REG_OFFSET)	? {31'b0, IC_REG} :
+			(adr_i[`WB_AW-1:0] == PRESCALER_VAL_REG_OFFSET)	? PRESCALER_VAL_REG :
+			(adr_i[`WB_AW-1:0] == IM_REG_OFFSET)	? IM_REG :
+			(adr_i[`WB_AW-1:0] == MIS_REG_OFFSET)	? MIS_REG :
+			(adr_i[`WB_AW-1:0] == RIS_REG_OFFSET)	? RIS_REG :
+			(adr_i[`WB_AW-1:0] == IC_REG_OFFSET)	? IC_REG :
 			32'hDEADBEEF;
 
 	always @ (posedge clk_i or posedge rst_i)

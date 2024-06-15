@@ -1,3 +1,4 @@
+// STARS STUDENTS: DO NOT MODIFY
 // $Id: $
 // File name:   sample_team_proj_Wrapper.sv
 // Created:     05/26/2024
