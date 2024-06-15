@@ -36,6 +36,7 @@ ifeq ($(ROOTLESS), 1)
 	USER_ARGS =
 endif
 export OPENLANE_ROOT?=$(PWD)/dependencies/openlane_src
+export BUS_WRAP_ROOT?=$(PWD)/dependencies/BusWrap
 export PDK_ROOT?=$(PWD)/dependencies/pdks
 export DISABLE_LVS?=0
 
@@ -115,7 +116,7 @@ simenv-cocotb:
 
 .PHONY: setup
 setup: check_dependencies install check-env install_mcw openlane pdk-with-volare setup-timing-scripts setup-cocotb precheck
-purdue-setup: check_dependencies install check-env install_mcw pdk-with-volare
+purdue-setup: check_dependencies install check-env install_mcw pdk-with-volare bus-wrap-setup
 
 # Openlane
 blocks=$(shell cd openlane && find * -maxdepth 0 -type d)
@@ -187,7 +188,7 @@ $(dv-targets-rtl): verify-%-rtl: $(dv_base_dependencies)
 	$(docker_run_verify)
 
 $(purdue-dv-targets-rtl): SIM=RTL
-$(purdue-dv-targets-rtl): purdue-verify-%-rtl: zicsr_fix
+$(purdue-dv-targets-rtl): purdue-verify-%-rtl: zicsr-fix
 	@$(custom_run_verify) || ( echo "Please check to ensure march=rv32i_zicsr not march=rv32i: mgmt_core_wrapper/verilog/dv/make/var.makefile"; exit 1 )
 
 $(dv-targets-gl): SIM=GL
@@ -448,7 +449,26 @@ caravel-sta: ./env/spef-mapping.tcl
 	@echo "Check summary.log of a specific corner to point to reports with reg2reg violations" 
 	@echo "Cap and slew violations are inside summary.log file itself"
 
-.PHONY: zicsr_fix
-zicsr_fix:
+.PHONY: zicsr-fix
+zicsr-fix:
 	cd $(MCW_ROOT)/verilog/dv/make &&\
 	sed -i.bak 's/rv32i /rv32i_zicsr /g' var.makefile
+
+#Clone BusWrap Repo
+.PHONY: bus-wrap-setup
+bus-wrap-setup:
+	pip install svmodule &&\
+	cd $(PWD)/dependencies &&\
+	git clone git@github.com:efabless/BusWrap.git
+
+#Generate YAML files for teams
+.PHONY: bus-wrap-initialize
+bus-wrap-initialize:
+	cd $(PWD)/verilog/rtl &&\
+	make initialize
+
+#Generate YAML files for teams
+.PHONY: bus-wrap-generate
+bus-wrap-generate:
+	cd $(PWD)/verilog/rtl &&\
+	make generate
