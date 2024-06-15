@@ -114,8 +114,8 @@ simenv-cocotb:
 	docker pull efabless/dv:cocotb
 
 .PHONY: setup
-#setup: check_dependencies install check-env install_mcw openlane pdk-with-volare setup-timing-scripts setup-cocotb precheck
-setup: check_dependencies install check-env install_mcw pdk-with-volare
+setup: check_dependencies install check-env install_mcw openlane pdk-with-volare setup-timing-scripts setup-cocotb precheck
+purdue-setup: check_dependencies install check-env install_mcw pdk-with-volare
 
 # Openlane
 blocks=$(shell cd openlane && find * -maxdepth 0 -type d)
@@ -126,6 +126,7 @@ $(blocks): % :
 dv_patterns=$(shell cd verilog/dv && find * -maxdepth 0 -type d)
 cocotb-dv_patterns=$(shell cd verilog/dv/cocotb && find . -name "*.c"  | sed -e 's|^.*/||' -e 's/.c//')
 dv-targets-rtl=$(dv_patterns:%=verify-%-rtl)
+purdue-dv-targets-rtl=$(dv_patterns:%=purdue-verify-%-rtl)
 cocotb-dv-targets-rtl=$(cocotb-dv_patterns:%=cocotb-verify-%-rtl)
 dv-targets-gl=$(dv_patterns:%=verify-%-gl)
 cocotb-dv-targets-gl=$(cocotb-dv_patterns:%=cocotb-verify-%-gl)
@@ -181,11 +182,12 @@ verify-all-gl: $(dv-targets-gl)
 .PHONY: verify-all-gl-sdf
 verify-all-gl-sdf: $(dv-targets-gl-sdf)
 
-# $(dv-targets-rtl): SIM=RTL
-# $(dv-targets-rtl): verify-%-rtl: $(dv_base_dependencies)
-# 	$(docker_run_verify)
+$(dv-targets-rtl): SIM=RTL
+$(dv-targets-rtl): verify-%-rtl: $(dv_base_dependencies)
+	$(docker_run_verify)
 
-$(dv-targets-rtl): verify-%-rtl: zicsr_fix
+$(purdue-dv-targets-rtl): SIM=RTL
+$(purdue-dv-targets-rtl): purdue-verify-%-rtl: zicsr_fix
 	@$(custom_run_verify) || ( echo "Please check to ensure march=rv32i_zicsr not march=rv32i: mgmt_core_wrapper/verilog/dv/make/var.makefile"; exit 1 )
 
 $(dv-targets-gl): SIM=GL
