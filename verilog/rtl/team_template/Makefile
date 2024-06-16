@@ -19,5 +19,4 @@ generate_wb_wrapper:
     fi
 	python3 $(BUS_WRAP_ROOT)/scripts/bus_wrap.py $(TEAM_PROJECT_FOLDER_NAME).yml -wb > $(TEAM_PROJECT_FOLDER_NAME)_WB.v; \
 
-
 	
