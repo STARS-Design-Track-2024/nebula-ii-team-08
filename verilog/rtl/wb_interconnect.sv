@@ -29,9 +29,9 @@ module wb_interconnect #(
     input logic [31:0] gpio_control_dat_o,
 
     // WB ack_o Signals
-    input designs_ack_o [NUM_TEAMS:1],
-    input la_control_ack_o,
-    input gpio_control_ack_o
+    input logic designs_ack_o [NUM_TEAMS:1],
+    input logic la_control_ack_o,
+    input logic gpio_control_ack_o
 );
 
     // Truncated Address

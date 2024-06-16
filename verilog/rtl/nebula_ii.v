@@ -76,7 +76,7 @@ module nebula_ii (
         .wbs_we_i(wbs_we_i),
         .wbs_sel_i(wbs_sel_i),
         .wbs_dat_i(wbs_dat_i),
-        .wbs_adr_i(wbs_adr_i),
+        .wbs_adr_i(adr_truncated),
         .wbs_ack_o(designs_wbs_ack_o[1]),
         .wbs_dat_o(designs_wbs_dat_o[1]),
 
@@ -106,7 +106,7 @@ module nebula_ii (
         .wbs_we_i(wbs_we_i),
         .wbs_sel_i(wbs_sel_i),
         .wbs_dat_i(wbs_dat_i),
-        .wbs_adr_i(wbs_adr_i),
+        .wbs_adr_i(adr_truncated),
         .wbs_ack_o(gpio_wbs_ack_o),
         .wbs_dat_o(gpio_wbs_dat_o),
         
@@ -130,7 +130,7 @@ module nebula_ii (
         .wbs_we_i(wbs_we_i),
         .wbs_sel_i(wbs_sel_i),
         .wbs_dat_i(wbs_dat_i),
-        .wbs_adr_i(wbs_adr_i),
+        .wbs_adr_i(adr_truncated),
         .wbs_ack_o(la_wbs_ack_o),
         .wbs_dat_o(la_wbs_dat_o),
         
@@ -141,31 +141,31 @@ module nebula_ii (
     );
 
     wb_interconnect #(
-        .NUM_TEAMS(1)
+        .NUM_TEAMS(NUM_TEAMS)
     ) wb_interconnect (
         // Wishbone Slave ports (only the ones we need)
-        wbs_stb_i(wbs_stb_i),
-        wbs_adr_i(wbs_adr_i),
-        wbs_ack_o(wbs_ack_o),
-        wbs_dat_o(wbs_dat_o),
+        .wbs_stb_i(wbs_stb_i),
+        .wbs_adr_i(wbs_adr_i),
+        .wbs_ack_o(wbs_ack_o),
+        .wbs_dat_o(wbs_dat_o),
 
         // Strobe Signals
-        designs_stb(designs_stb),
-        la_control_stb(la_control_stb),
-        gpio_control_stb(gpio_control_stb),
+        .designs_stb(designs_stb),
+        .la_control_stb(la_control_stb),
+        .gpio_control_stb(gpio_control_stb),
 
         // Truncated Address (use only last 16 bits)
-        adr_truncated(adr_truncated),
+        .adr_truncated(adr_truncated),
 
         // WB dat_o Signals
-        designs_dat_o(designs_wbs_dat_o),
-        la_control_dat_o(la_wbs_dat_o),
-        gpio_control_dat_o(gpio_wbs_dat_o),
+        .designs_dat_o(designs_wbs_dat_o),
+        .la_control_dat_o(la_wbs_dat_o),
+        .gpio_control_dat_o(gpio_wbs_dat_o),
 
         // WB ack_o Signals
-        designs_ack_o(designs_wbs_ack_o),
-        la_control_ack_o(la_wbs_ack_o),
-        gpio_control_ack_o(gpio_wbs_ack_o)
+        .designs_ack_o(designs_wbs_ack_o),
+        .la_control_ack_o(la_wbs_ack_o),
+        .gpio_control_ack_o(gpio_wbs_ack_o)
     );
 
 endmodule
