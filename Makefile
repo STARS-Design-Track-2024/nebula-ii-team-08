@@ -36,6 +36,7 @@ ifeq ($(ROOTLESS), 1)
 	USER_ARGS =
 endif
 export OPENLANE_ROOT?=$(PWD)/dependencies/openlane_src
+export BUS_WRAP_ROOT?=$(PWD)/dependencies/BusWrap
 export PDK_ROOT?=$(PWD)/dependencies/pdks
 export DISABLE_LVS?=0
 
@@ -115,6 +116,7 @@ simenv-cocotb:
 
 .PHONY: setup
 setup: check_dependencies install check-env install_mcw openlane pdk-with-volare setup-timing-scripts setup-cocotb precheck
+purdue-setup: check_dependencies install check-env install_mcw pdk-with-volare bus-wrap-setup
 
 # Openlane
 blocks=$(shell cd openlane && find * -maxdepth 0 -type d)
@@ -125,6 +127,7 @@ $(blocks): % :
 dv_patterns=$(shell cd verilog/dv && find * -maxdepth 0 -type d)
 cocotb-dv_patterns=$(shell cd verilog/dv/cocotb && find . -name "*.c"  | sed -e 's|^.*/||' -e 's/.c//')
 dv-targets-rtl=$(dv_patterns:%=verify-%-rtl)
+purdue-dv-targets-rtl=$(dv_patterns:%=purdue-verify-%-rtl)
 cocotb-dv-targets-rtl=$(cocotb-dv_patterns:%=cocotb-verify-%-rtl)
 dv-targets-gl=$(dv_patterns:%=verify-%-gl)
 cocotb-dv-targets-gl=$(cocotb-dv_patterns:%=cocotb-verify-%-gl)
@@ -151,6 +154,20 @@ docker_run_verify=\
 		efabless/dv:latest \
 		sh -c $(verify_command)
 
+custom_run_verify =\
+    export TARGET_PATH=${TARGET_PATH} &&\
+    export PDK_ROOT=${PDK_ROOT} &&\
+    export CARAVEL_ROOT=${CARAVEL_ROOT} &&\
+    export DESIGNS=$(TARGET_PATH) &&\
+    export USER_PROJECT_VERILOG=$(TARGET_PATH)/verilog &&\
+    export PDK=$(PDK) &&\
+    export CORE_VERILOG_PATH=$(TARGET_PATH)/mgmt_core_wrapper/verilog &&\
+    export CARAVEL_VERILOG_PATH=$(TARGET_PATH)/caravel/verilog &&\
+    export MCW_ROOT=$(MCW_ROOT) &&\
+	export GCC_PREFIX=riscv64-unknown-elf &&\
+	export GCC_PATH=/package/riscv-gnu-toolchain/bin/ &&\
+    cd verilog/dv/$* && export SIM=${SIM} && make
+
 .PHONY: harden
 harden: $(blocks)
 
@@ -169,6 +186,10 @@ verify-all-gl-sdf: $(dv-targets-gl-sdf)
 $(dv-targets-rtl): SIM=RTL
 $(dv-targets-rtl): verify-%-rtl: $(dv_base_dependencies)
 	$(docker_run_verify)
+
+$(purdue-dv-targets-rtl): SIM=RTL
+$(purdue-dv-targets-rtl): purdue-verify-%-rtl: zicsr-fix
+	@$(custom_run_verify) || ( echo "Please check to ensure march=rv32i_zicsr not march=rv32i: mgmt_core_wrapper/verilog/dv/make/var.makefile"; exit 1 )
 
 $(dv-targets-gl): SIM=GL
 $(dv-targets-gl): verify-%-gl: $(dv_base_dependencies)
@@ -427,3 +448,27 @@ caravel-sta: ./env/spef-mapping.tcl
 	@echo "You can find results for all corners in $(CUP_ROOT)/signoff/caravel/openlane-signoff/timing/"
 	@echo "Check summary.log of a specific corner to point to reports with reg2reg violations" 
 	@echo "Cap and slew violations are inside summary.log file itself"
+
+.PHONY: zicsr-fix
+zicsr-fix:
+	cd $(MCW_ROOT)/verilog/dv/make &&\
+	sed -i.bak 's/rv32i /rv32i_zicsr /g' var.makefile
+
+#Clone BusWrap Repo
+.PHONY: bus-wrap-setup
+bus-wrap-setup:
+	pip install svmodule &&\
+	cd $(PWD)/dependencies &&\
+	git clone git@github.com:efabless/BusWrap.git
+
+#Generate YAML files for teams
+.PHONY: bus-wrap-initialize
+bus-wrap-initialize:
+	cd $(PWD)/verilog/rtl &&\
+	make initialize
+
+#Generate YAML files for teams
+.PHONY: bus-wrap-generate
+bus-wrap-generate:
+	cd $(PWD)/verilog/rtl &&\
+	make generate

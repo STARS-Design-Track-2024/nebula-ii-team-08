@@ -1,0 +1,81 @@
+---
+info:
+  name: team_template
+  description: Template Project for STARS students
+  repo: STARS-Design-Track-2024/Project_Template.git
+  owner: Purdue University
+  license: APACHE 2.0
+  author: Aidan Jacobsen
+  email: jacobse7@purdue.edu
+  version: v1.0.0
+  date: 15-06-2024
+  category: digital
+  tags:
+    - template
+  bus:
+    - wb
+  type: soft
+  status: verified
+  qualification: N/A
+  cell_count: N/A
+  width: 0.0
+  height: 0.0
+  technology: N/A
+  clock_freq_mhz: 10
+  digital_supply_voltage: n/a
+  analog_supply_voltage: n/a
+
+ports:
+  - name: en
+    width: 1
+    direction: input
+    description: Enables or disables team design
+
+external_interface:
+  - name: la_data_in
+    port: la_data_in
+    width: 128
+    direction: input
+    description: Inputs from the Logic Analyzer
+  - name: la_data_out
+    port: la_data_out
+    width: 128
+    direction: output
+    description: Outputs from the Logic Analyzer
+  - name: la_oenb
+    port: la_oenb
+    width: 128
+    direction: input
+    description: Output Enable from the Logic Analyzer
+  - name: gpio_in
+    port: gpio_in
+    width: 34
+    direction: input
+    description: Inputs from GPIO
+  - name: gpio_out
+    port: gpio_out
+    width: 34
+    direction: output
+    description: Outputs to GPIO
+  - name: gpio_oeb
+    port: gpio_oeb
+    width: 34
+    direction: output
+    description: Output enables to GPIO
+
+clock:
+  name: clk
+
+reset:
+  name: nrst
+  level: 0
+
+registers:
+  - name: EN_VAL
+    size: 1
+    mode: w
+    fifo: false
+    offset: 0
+    bit_access: false
+    write_port: en
+    description: Enables or disables team design
