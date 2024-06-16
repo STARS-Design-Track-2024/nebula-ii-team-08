@@ -30,6 +30,23 @@ module gpio_control_wrapper #(
     output wire [33:0] gpio_oeb
 );
 
-    //TODO: use buswrap and Matthew's design to wrap the actual controller for the GPIO
-
+    gpio_control_WB gpio_control_WB (
+        .ext_clk(wb_clk_i),
+        .clk_i(wb_clk_i),
+        .rst_i(wb_rst_i),
+        .adr_i(wbs_adr_i),
+        .dat_i(wbs_dat_i),
+        .dat_o(wbs_dat_i),
+        .sel_i(wbs_sel_i),
+        .cyc_i(wbs_cyc_i),
+        .stb_i(wbs_stb_i),
+        .ack_o(wbs_ack_o),
+        .we_i(wbs_we_i),
+        .IRQ(),
+        .io_oeb(designs_gpio_oeb),
+        .io_out(designs_gpio_out),
+        .muxxed_io_oeb(gpio_oeb),
+        .muxxed_io_out(gpio_out)
+    );
+    
 endmodule

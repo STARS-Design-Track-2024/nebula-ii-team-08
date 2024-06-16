@@ -38,8 +38,14 @@ module caravel_ii (
     output [2:0] irq
 );
     
-    wire [33:0] designs_ncs[NUM_TEAMS:1];//? I don't think we need this anymore. It should be handled in team_wrapper
-    
+    assign irq = 3'b0;
+
+    wire [0:0] la_wbs_ack_o;
+    wire [31:0] la_wbs_dat_o;
+
+    wire [0:0] gpio_wbs_ack_o;
+    wire [31:0] gpio_wbs_dat_o;
+
     wire [0:0] designs_wbs_ack_o[NUM_TEAMS:1];
     wire [31:0] designs_wbs_dat_o[NUM_TEAMS:1];
 
@@ -95,8 +101,8 @@ module caravel_ii (
         .wbs_sel_i(wbs_sel_i),
         .wbs_dat_i(wbs_dat_i),
         .wbs_adr_i(wbs_adr_i),
-        output wire wbs_ack_o,//TODO: not sure how to handle rn
-        output wire [31:0] wbs_dat_o,//TODO: not sure how to handle rn
+        .wbs_ack_o(gpio_wbs_ack_o),
+        .wbs_dat_o(gpio_wbs_dat_o),
         
         // GPIOs
         .designs_gpio_out(designs_gpio_out), // Breakout Board Pins
@@ -119,15 +125,13 @@ module caravel_ii (
         .wbs_sel_i(wbs_sel_i),
         .wbs_dat_i(wbs_dat_i),
         .wbs_adr_i(wbs_adr_i),
-        output wire wbs_ack_o,//TODO: not sure how to handle rn
-        output wire [31:0] wbs_dat_o,//TODO: not sure how to handle rn
+        .wbs_ack_o(la_wbs_ack_o),
+        .wbs_dat_o(la_wbs_dat_o),
         
         // GPIOs
         .designs_la_data_out(designs_la_data_out), // Breakout Board Pins
-        .designs_la_oenb(designs_la_oenb), // Active Low Output Enable
 
-        .la_data_out(la_data_out),
-        .la_oenb(la_oenb)
+        .la_data_out(la_data_out)
     );
 
 endmodule

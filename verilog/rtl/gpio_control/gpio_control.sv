@@ -5,7 +5,7 @@
 //needs to support 8 pins per pad
 
 
-module gpio_pad(
+module gpio_control(
     input logic clk,
     input logic nrst,
     input logic [37:0] io_oeb [12:0],  
@@ -22,6 +22,7 @@ module gpio_pad(
     //muxxed output to the gpio pins
     output logic [37:0] muxxed_io_oeb,
     output logic [37:0] muxxed_io_out
+    
 );
 
 integer 0to7_idx;

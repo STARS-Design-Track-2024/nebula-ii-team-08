@@ -23,11 +23,9 @@ module la_control_wrapper #(
     output wire [31:0] wbs_dat_o,
     
     // GPIOs
-    input wire [33:0] designs_la_data_out[NUM_TEAMS:1], // Breakout Board Pins
-    input wire [33:0] designs_la_oenb[NUM_TEAMS:1], // Active Low Output Enable
+    input wire [127:0] designs_la_data_out[NUM_TEAMS:1], // Breakout Board Pins
 
-    output wire [33:0] la_data_out,
-    output wire [33:0] la_oenb
+    output wire [127:0] la_data_out
 );
 
     //TODO: use buswrap and Matthew's design to wrap the actual controller for the Logic Analyzer
