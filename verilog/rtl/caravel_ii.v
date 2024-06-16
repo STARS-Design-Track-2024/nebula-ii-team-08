@@ -40,6 +40,12 @@ module caravel_ii (
     
     assign irq = 3'b0;
 
+    wire designs_stb [NUM_TEAMS:1];
+    wire gpio_control_stb;
+    wire la_control_stb;
+
+    wire [31:0] adr_truncated;
+
     wire [0:0] la_wbs_ack_o;
     wire [31:0] la_wbs_dat_o;
 
@@ -65,7 +71,7 @@ module caravel_ii (
         //Wishbone Slave and user clk, rst
         .wb_clk_i(wb_clk_i),
         .wb_rst_i(wb_rst_i),
-        .wbs_stb_i(wbs_stb_i),
+        .wbs_stb_i(designs_stb[1]),
         .wbs_cyc_i(wbs_cyc_i),
         .wbs_we_i(wbs_we_i),
         .wbs_sel_i(wbs_sel_i),
@@ -95,7 +101,7 @@ module caravel_ii (
         // Wishbone Slave ports (WB MI A)
         .wb_clk_i(wb_clk_i),
         .wb_rst_i(wb_rst_i),
-        .wbs_stb_i(wbs_stb_i),
+        .wbs_stb_i(gpio_control_stb),
         .wbs_cyc_i(wbs_cyc_i),
         .wbs_we_i(wbs_we_i),
         .wbs_sel_i(wbs_sel_i),
@@ -119,7 +125,7 @@ module caravel_ii (
         // Wishbone Slave ports (WB MI A)
         .wb_clk_i(wb_clk_i),
         .wb_rst_i(wb_rst_i),
-        .wbs_stb_i(wbs_stb_i),
+        .wbs_stb_i(la_control_stb),
         .wbs_cyc_i(wbs_cyc_i),
         .wbs_we_i(wbs_we_i),
         .wbs_sel_i(wbs_sel_i),
@@ -132,6 +138,34 @@ module caravel_ii (
         .designs_la_data_out(designs_la_data_out), // Breakout Board Pins
 
         .la_data_out(la_data_out)
+    );
+
+    wb_interconnect #(
+        .NUM_TEAMS(1)
+    ) wb_interconnect (
+        // Wishbone Slave ports (only the ones we need)
+        wbs_stb_i(wbs_stb_i),
+        wbs_adr_i(wbs_adr_i),
+        wbs_ack_o(wbs_ack_o),
+        wbs_dat_o(wbs_dat_o),
+
+        // Strobe Signals
+        designs_stb(designs_stb),
+        la_control_stb(la_control_stb),
+        gpio_control_stb(gpio_control_stb),
+
+        // Truncated Address (use only last 16 bits)
+        adr_truncated(adr_truncated),
+
+        // WB dat_o Signals
+        designs_dat_o(designs_wbs_dat_o),
+        la_control_dat_o(la_wbs_dat_o),
+        gpio_control_dat_o(gpio_wbs_dat_o),
+
+        // WB ack_o Signals
+        designs_ack_o(designs_wbs_ack_o),
+        la_control_ack_o(la_wbs_ack_o),
+        gpio_control_ack_o(gpio_wbs_ack_o)
     );
 
 endmodule
