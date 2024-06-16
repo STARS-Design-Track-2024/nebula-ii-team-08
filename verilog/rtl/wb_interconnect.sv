@@ -16,7 +16,7 @@ module wb_interconnect #(
     output logic [31:0] wbs_dat_o,
 
     // Strobe Signals
-    output logic [NUM_TEAMS:1] designs_stb,
+    output logic designs_stb [NUM_TEAMS:1],
     output logic la_control_stb,
     output logic gpio_control_stb,
 
@@ -29,7 +29,7 @@ module wb_interconnect #(
     input logic [31:0] gpio_control_dat_o,
 
     // WB ack_o Signals
-    input [NUM_TEAMS:1] designs_ack_o,
+    input designs_ack_o [NUM_TEAMS:1],
     input la_control_ack_o,
     input gpio_control_ack_o
 );
