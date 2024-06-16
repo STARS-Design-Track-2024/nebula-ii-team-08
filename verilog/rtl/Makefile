@@ -1,4 +1,5 @@
-PATTERNS = sample_team_proj
+# PATTERNS = gpio_control la_control sample_team_proj
+PATTERNS = sample_team_proj team_template
 
 #Bus Wrap Initialize
 .PHONY: initialize
