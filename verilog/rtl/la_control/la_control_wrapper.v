@@ -27,7 +27,22 @@ module la_control_wrapper #(
 
     output wire [127:0] la_data_out
 );
-
+    la_control_WB la_control_WB (
+        .ext_clk(wb_clk_i),
+        .clk_i(wb_clk_i),
+        .rst_i(wb_rst_i),
+        .adr_i(wbs_adr_i),
+        .dat_i(wbs_dat_i),
+        .dat_o(wbs_dat_o),
+        .sel_i(wbs_sel_i),
+        .cyc_i(wbs_cyc_i),
+        .stb_i(wbs_stb_i),
+        .ack_o(wbs_ack_o),
+        .we_i(wbs_we_i),
+        .IRQ(),
+        .la_dat(designs_la_data_out),
+        .muxxed_la_dat(la_data_out)
+    );
     //TODO: use buswrap and Matthew's design to wrap the actual controller for the Logic Analyzer
 
 endmodule

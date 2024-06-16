@@ -1,4 +1,4 @@
-PATTERNS = gpio_control sample_team_proj
+PATTERNS = gpio_control sample_team_proj la_control
 # PATTERNS = sample_team_proj team_template
 
 #Bus Wrap Initialize

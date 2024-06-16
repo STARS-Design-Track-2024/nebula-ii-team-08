@@ -6,7 +6,7 @@
 //just
 //a
 //mux
-module la(
+module la_control(
     input logic clk,
     input logic nrst,
 
