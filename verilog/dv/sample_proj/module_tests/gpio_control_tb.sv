@@ -1,7 +1,7 @@
 
 
 `timescale 1ns/10ps
-module gpio_pad_tb();
+module gpio_control_tb();
     parameter CLK_PERIOD = 100;
     logic tb_clk;
     logic tb_nrst;
@@ -36,6 +36,12 @@ gpio_control DUT (
     .muxxed_io_oeb(tb_muxxed_io_oeb),
     .muxxed_io_out(tb_muxxed_io_out)
     );
+
+// Signal Dump
+initial begin
+    $dumpfile ("gpio_control.vcd");
+    $dumpvars;
+end
 
 //clock gen
 always begin
