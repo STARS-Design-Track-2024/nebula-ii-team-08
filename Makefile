@@ -474,3 +474,15 @@ bus-wrap-initialize:
 bus-wrap-generate:
 	cd $(PWD)/verilog/rtl &&\
 	make generate
+
+# Example target: tb-module-sample_proj-flex_counter
+# These testbenches must live within the dv/team_##/module_tests directory and will output there too
+.PHONY: tb-module-%
+tb-module-%:
+	@echo "\n------------"
+	@echo "Team Folder: $(firstword $(subst -, ,$*))"
+	@echo "Module Name: $(lastword $(subst -, ,$*))"
+	@echo "------------\n"
+	export USER_PROJECT_VERILOG=$(PWD)/verilog &&\
+	cd $(PWD)/verilog/dv/$(firstword $(subst -, ,$*))/module_tests &&\
+	make $(lastword $(subst -, ,$*)).vcd
