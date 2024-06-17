@@ -48,6 +48,7 @@ always begin
     tb_clk = 1'b0;
     #(CLK_PERIOD/2);
     tb_clk = 1'b1;
+    #(CLK_PERIOD/2);
 end
 
 integer random_pin_p1; //random only returns 32 bits but we need 38 for the pins
