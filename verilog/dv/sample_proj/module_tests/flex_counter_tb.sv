@@ -66,9 +66,9 @@ module tb_flex_counter();
 
     // Task to cleanly and consistently check DUT output values
     task check_outputs;
-        input logic [NUM_BITS-1:0] expected_count_out;
-        input logic expected_rollover_flag;
-        input string check_tag;
+        logic [NUM_BITS-1:0] expected_count_out;
+        logic expected_rollover_flag;
+        string check_tag;
         logic count_correct;
         logic flag_correct;
     begin
