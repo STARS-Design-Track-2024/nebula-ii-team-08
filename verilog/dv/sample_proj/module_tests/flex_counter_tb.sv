@@ -1,12 +1,12 @@
 // $Id: $
-// File name:   tb_flex_counter.sv
+// File name:   flex_counter_tb.sv
 // Created:     5/25/2024
 // Author:      Miguel Isrrael Teran
 // Description: Test bench for flexible counter
 
 `timescale 1ns / 10ps
 
-module tb_flex_counter();
+module flex_counter_tb();
 
     // Define local parameters used by the test bench
     localparam  CLK_PERIOD = 10;

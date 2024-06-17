@@ -1,4 +1,5 @@
-// STARS STUDENTS: ADD YOUR DESIGN HERE
+// STARS STUDENTS: TAKE LOOK AT THIS SAMPLE PROJECT
+
 // $Id: $
 // File name:   sample_team_proj.sv
 // Created:     5/23/2024
@@ -32,13 +33,14 @@
 module sample_team_proj (
     
     //These are your standard clock and nrst signals
-    input logic clk, nrst, // clock rate is 10 MHz
+    input logic clk, // clock rate is 10 MHz
+    input logic nrst, // active low reset
     
-    input logic en, //This signal is an enable signal for your chip. Your design should disable if this is low.
+    input logic en, // This signal is an enable signal for your chip. Your design should disable if this is low.
 
     // You can also have input registers controlled by the Caravel Harness's on chip processor
     input logic [13:0] prescaler,  // from Wishbone bus - controls period per pin in the sequence
-    output logic [0:0] done,  //Signal indicating last pin done
+    output logic [0:0] done,  // Signal indicating last pin done
     
     // Logic Analyzer - Grant access to all 128 LA
     input wire [127:0] la_data_in,
@@ -89,7 +91,7 @@ module sample_team_proj (
     // Decoder instantiation
     decoder_for_GPIO decoder (
         .in(count),
-        .out(gpio)
+        .out(gpio_out)
     );
 
 endmodule
