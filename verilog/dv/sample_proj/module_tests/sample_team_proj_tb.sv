@@ -133,7 +133,7 @@ module sample_team_proj_tb();
 
         // Cycle and check until end of sequence (GPIO[0] to GPIO[33] should go high)
         for (i = 0; i <= 34; i++) begin
-            // Wait 1 ms (1000 clock periods)
+            // Wait "prescaler" ms (10000 * prescaler clock periods)
             #(10000 * prescaler_value * CLK_PERIOD);
 
             // Wait one more clock cycle (for first period only)
@@ -156,8 +156,10 @@ module sample_team_proj_tb();
         tb_sub_checks = 0;
         tb_total_checks = 0;
         tb_passed = 0;
+        tb_en = 1'b0;
         tb_la_oenb = '0;
         tb_la_data_in = '0;
+        tb_gpio_in = '1;
         tb_prescaler = '0;
         tb_nrst = 1'b1;  // initially inactive
 
@@ -176,13 +178,32 @@ module sample_team_proj_tb();
         // Check #1
         check_outputs('0, 1'b0);
 
-
-        // // **************************************************************************
-        // Test Case #1: Test period of 1 ms
+        // **************************************************************************
+        // Test Case #1: Testing when design is not enabled
         // **************************************************************************
         tb_test_case_num += 1;
         tb_sub_checks = 0;
         reset_dut;
+
+        // Enable the sequence
+        tb_prescaler = 14'd1;
+        tb_la_data_in[0] = 1'b1;
+
+        // Wait some time before checking
+        #(35 * 10000 * tb_prescaler * CLK_PERIOD);
+
+        // Check that outputs remained at 0
+        check_outputs('0, 1'b0);
+
+        // **************************************************************************
+        // Test Case #2: Test period of 1 ms
+        // **************************************************************************
+        tb_test_case_num += 1;
+        tb_sub_checks = 0;
+        reset_dut;
+
+        // Enable the design
+        tb_en = 1'b1;
 
         // Enable the sequence
         tb_la_data_in[0] = 1'b1;
@@ -201,7 +222,7 @@ module sample_team_proj_tb();
         check_outputs('0, 1'b0);
 
         // **************************************************************************
-        // Test Case #2: Test period of 10 ms
+        // Test Case #3: Test period of 10 ms
         // **************************************************************************
         tb_test_case_num += 1;
         tb_sub_checks = 0;
