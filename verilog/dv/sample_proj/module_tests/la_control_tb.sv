@@ -19,6 +19,12 @@ always begin
     #(CLK_PERIOD/2);
 end
 
+// Signal Dump
+initial begin
+    $dumpfile ("la_control.vcd");
+    $dumpvars;
+end
+
 la_control DUT (
     .clk(tb_clk),
     .nrst(tb_nrst),
