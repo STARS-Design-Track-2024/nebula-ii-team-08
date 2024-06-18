@@ -24,7 +24,7 @@
 
 `define				WB_AW		16
 
-`include			"wb_wrapper.vh"
+// `include			"wb_wrapper.vh"
 
 module sample_team_proj_WB (
 	`WB_SLAVE_PORTS,
@@ -36,8 +36,8 @@ module sample_team_proj_WB (
 	output	wire	[34-1:0]	gpio_oeb
 );
 
-	localparam	PRESCALER_VAL_REG_OFFSET = `WB_AW'h0000;
 	localparam	EN_VAL_REG_OFFSET = `WB_AW'h0000;
+	localparam	PRESCALER_VAL_REG_OFFSET = `WB_AW'h0004;
 	localparam	IM_REG_OFFSET = `WB_AW'hFF00;
 	localparam	MIS_REG_OFFSET = `WB_AW'hFF04;
 	localparam	RIS_REG_OFFSET = `WB_AW'hFF08;
@@ -48,18 +48,18 @@ module sample_team_proj_WB (
 
 	`WB_CTRL_SIGNALS
 
+	wire [1-1:0]	en;
 	wire [14-1:0]	prescaler;
 	wire [1-1:0]	done;
-	wire [1-1:0]	en;
 
 	// Register Definitions
-	reg [13:0]	PRESCALER_VAL_REG;
-	assign	prescaler = PRESCALER_VAL_REG;
-	`WB_REG(PRESCALER_VAL_REG, 0, 14)
-
 	reg [0:0]	EN_VAL_REG;
 	assign	en = EN_VAL_REG;
 	`WB_REG(EN_VAL_REG, 0, 1)
+
+	reg [13:0]	PRESCALER_VAL_REG;
+	assign	prescaler = PRESCALER_VAL_REG;
+	`WB_REG(PRESCALER_VAL_REG, 0, 14)
 
 	reg [0:0] IM_REG;
 	reg [0:0] IC_REG;
@@ -84,9 +84,9 @@ module sample_team_proj_WB (
 	sample_team_proj instance_to_wrap (
 		.clk(clk),
 		.nrst(nrst),
+		.en(en),
 		.prescaler(prescaler),
 		.done(done),
-		.en(en),
 		.la_data_in(la_data_in),
 		.la_data_out(la_data_out),
 		.la_oenb(la_oenb),
@@ -96,8 +96,8 @@ module sample_team_proj_WB (
 	);
 
 	assign	dat_o = 
-			(adr_i[`WB_AW-1:0] == PRESCALER_VAL_REG_OFFSET)	? PRESCALER_VAL_REG :
 			(adr_i[`WB_AW-1:0] == EN_VAL_REG_OFFSET)	? EN_VAL_REG :
+			(adr_i[`WB_AW-1:0] == PRESCALER_VAL_REG_OFFSET)	? PRESCALER_VAL_REG :
 			(adr_i[`WB_AW-1:0] == IM_REG_OFFSET)	? IM_REG :
 			(adr_i[`WB_AW-1:0] == MIS_REG_OFFSET)	? MIS_REG :
 			(adr_i[`WB_AW-1:0] == RIS_REG_OFFSET)	? RIS_REG :

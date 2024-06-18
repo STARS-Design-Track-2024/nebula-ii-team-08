@@ -1,4 +1,3 @@
----
 info:
   name: sample_team_proj
   description: Sample Team Project for STARS students
@@ -27,6 +26,10 @@ info:
   analog_supply_voltage: n/a
 
 ports:
+  - name: en
+    width: 1
+    direction: input
+    description: Enables or disables team design
   - name: prescaler
     width: 14
     direction: input
@@ -35,10 +38,6 @@ ports:
     width: 1
     direction: output
     description: Indicates all GPIO pins have gone high at least once
-  - name: en
-    width: 1
-    direction: input
-    description: Enables or disables team design
 
 external_interface:
   - name: la_data_in
@@ -80,14 +79,6 @@ reset:
   level: 0
 
 registers:
-  - name: PRESCALER_VAL
-    size: 14
-    mode: w
-    fifo: false
-    offset: 0
-    bit_access: false
-    write_port: prescaler
-    description: Register for input prescaler value
   - name: EN_VAL
     size: 1
     mode: w
@@ -96,6 +87,14 @@ registers:
     bit_access: false
     write_port: en
     description: Enables or disables team design
+  - name: PRESCALER_VAL
+    size: 14
+    mode: w
+    fifo: false
+    offset: 4
+    bit_access: false
+    write_port: prescaler
+    description: Register for input prescaler value
 
 flags:
   - name: DONE_ASSERT
