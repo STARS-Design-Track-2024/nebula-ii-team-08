@@ -1,6 +1,3 @@
-
-
-
 //this
 //is
 //just
@@ -22,8 +19,6 @@ always_comb begin : just_a_mux
     muxxed_la_dat = la_dat[la_sel];
 end
 
-
 //assign muxxed_la_dat = la_dat[la_sel];
-
 
 endmodule
