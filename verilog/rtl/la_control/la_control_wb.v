@@ -24,11 +24,11 @@
 
 `define				WB_AW		16
 
-`include			"wb_wrapper.vh"
+// `include			"wb_wrapper.vh"
 
 module la_control_WB (
 	`WB_SLAVE_PORTS,
-	input	wire	[1664-1:0]	la_dat,
+	input	wire	[128-1:0]	la_dat [12:0],
 	output	wire	[128-1:0]	muxxed_la_dat
 );
 

@@ -2,8 +2,6 @@
 //This is just the sample project right now
 `define NUM_TEAMS 1
 
-`default_nettype none
-
 module nebula_ii (
 `ifdef USE_POWER_PINS
     inout vccd1,	// User area 1 1.8V supply
@@ -38,36 +36,37 @@ module nebula_ii (
     output [2:0] irq
 );
     
-    assign irq = 3'b0;
+    assign irq = 3'b0; // TODO: use interrupt from sample project?
 
+    // Truncated address for each internal block
+    wire [31:0] adr_truncated;
+
+    // WB slave stb_i inputs to all designs, GPIO control, LA control
     wire designs_stb [NUM_TEAMS:1];
     wire gpio_control_stb;
     wire la_control_stb;
 
-    wire [31:0] adr_truncated;
-
-    wire [0:0] la_wbs_ack_o;
+    // WB slave outputs from all designs, GPIO control, LA control
+    wire designs_wbs_ack_o[NUM_TEAMS:1];
+    wire [31:0] designs_wbs_dat_o[NUM_TEAMS:1];
+    wire la_wbs_ack_o;
     wire [31:0] la_wbs_dat_o;
-
-    wire [0:0] gpio_wbs_ack_o;
+    wire gpio_wbs_ack_o;
     wire [31:0] gpio_wbs_dat_o;
 
-    wire [0:0] designs_wbs_ack_o[NUM_TEAMS:1];
-    wire [31:0] designs_wbs_dat_o[NUM_TEAMS:1];
-
+    // LA outputs from all designs
     wire [127:0] designs_la_data_out[NUM_TEAMS:1];
     wire [127:0] designs_la_oenb[NUM_TEAMS:1];
 
+    // GPIO outputs from all designs
     wire [37:0] designs_gpio_out[NUM_TEAMS:1]; // Breakout Board Pins
     wire [37:0] designs_gpio_oeb[NUM_TEAMS:1]; // Active Low Output Enable
 
-    wire [33:0] designs_irq[NUM_TEAMS:1];
+    // IRQ from all designs
+    wire [2:0] designs_irq[NUM_TEAMS:1];
 
+    // Sample Project Instance
     sample_team_proj_Wrapper sample_team_proj_Wrapper (
-
-        // Chip Select (Active Low)
-        .ncs(designs_ncs[1]),
-
         //Wishbone Slave and user clk, rst
         .wb_clk_i(wb_clk_i),
         .wb_rst_i(wb_rst_i),
@@ -94,6 +93,7 @@ module nebula_ii (
         .irq(designs_irq[1])
     );
 
+    // GPIO Control
     gpio_control_wrapper #(
         .NUM_TEAMS(NUM_TEAMS)
     ) gpio_control_wrapper
@@ -111,13 +111,13 @@ module nebula_ii (
         .wbs_dat_o(gpio_wbs_dat_o),
         
         // GPIOs
-        .designs_gpio_out(designs_gpio_out), // Breakout Board Pins
-        .designs_gpio_oeb(designs_gpio_oeb), // Active Low Output Enable
-
+        .designs_gpio_out(designs_gpio_out),
+        .designs_gpio_oeb(designs_gpio_oeb),
         .gpio_out(io_out),
         .gpio_oeb(io_oeb)
     );
 
+    // LA Control
     la_control_wrapper #(
         .NUM_TEAMS(NUM_TEAMS)
     ) la_control_wrapper
@@ -134,12 +134,12 @@ module nebula_ii (
         .wbs_ack_o(la_wbs_ack_o),
         .wbs_dat_o(la_wbs_dat_o),
         
-        // GPIOs
-        .designs_la_data_out(designs_la_data_out), // Breakout Board Pins
-
+        // LA
+        .designs_la_data_out(designs_la_data_out),
         .la_data_out(la_data_out)
     );
 
+    // WB Interconnect
     wb_interconnect #(
         .NUM_TEAMS(NUM_TEAMS)
     ) wb_interconnect (

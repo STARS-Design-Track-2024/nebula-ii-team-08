@@ -24,21 +24,21 @@
 
 `define				WB_AW		16
 
-`include			"wb_wrapper.vh"
+// `include			"wb_wrapper.vh"
 
 module gpio_control_WB (
 	`WB_SLAVE_PORTS,
-	input	wire	[494-1:0]	io_oeb,
-	input	wire	[494-1:0]	io_out,
+	input	wire	[38-1:0]	io_oeb [12:0],
+	input	wire	[38-1:0]	io_out [12:0],
 	output	wire	[38-1:0]	muxxed_io_oeb,
 	output	wire	[38-1:0]	muxxed_io_out
 );
 
 	localparam	PIN_0TO7_SEL_VAL_REG_OFFSET = `WB_AW'h0000;
-	localparam	PIN_8TO15_SEL_VAL_REG_OFFSET = `WB_AW'h0000;
-	localparam	PIN_16TO23_SEL_VAL_REG_OFFSET = `WB_AW'h0000;
-	localparam	PIN_24TO731_SEL_VAL_REG_OFFSET = `WB_AW'h0000;
-	localparam	PIN_32TO37_SEL_VAL_REG_OFFSET = `WB_AW'h0000;
+	localparam	PIN_8TO15_SEL_VAL_REG_OFFSET = `WB_AW'h0004;
+	localparam	PIN_16TO23_SEL_VAL_REG_OFFSET = `WB_AW'h0008;
+	localparam	PIN_24TO731_SEL_VAL_REG_OFFSET = `WB_AW'h000C;
+	localparam	PIN_32TO37_SEL_VAL_REG_OFFSET = `WB_AW'h0010;
 	wire		clk = clk_i;
 	wire		nrst = (~rst_i);
 

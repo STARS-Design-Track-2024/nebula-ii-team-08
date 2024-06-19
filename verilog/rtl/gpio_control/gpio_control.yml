@@ -90,7 +90,7 @@ registers:
     size: 28
     mode: w
     fifo: false
-    offset: 0
+    offset: 4
     bit_access: false
     write_port: pin_8to15_sel
     description: Register for pin_8to15_sel
@@ -98,7 +98,7 @@ registers:
     size: 28
     mode: w
     fifo: false
-    offset: 0
+    offset: 8
     bit_access: false
     write_port: pin_16to23_sel
     description: Register for pin_16to23_sel
@@ -106,7 +106,7 @@ registers:
     size: 28
     mode: w
     fifo: false
-    offset: 0
+    offset: 12
     bit_access: false
     write_port: pin_24to31_sel
     description: Register for pin_24to31_sel
@@ -114,7 +114,7 @@ registers:
     size: 24
     mode: w
     fifo: false
-    offset: 0
+    offset: 16
     bit_access: false
     write_port: pin_32to37_sel
     description: Register for pin_32to37_sel
