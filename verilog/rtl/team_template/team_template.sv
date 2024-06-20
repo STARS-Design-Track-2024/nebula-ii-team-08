@@ -1,3 +1,5 @@
+// STARS STUDENTS: ADD YOUR DESIGN HERE
+
 // $Id: $
 // File name:   team_template.sv
 // Created:     MM/DD/YYYY

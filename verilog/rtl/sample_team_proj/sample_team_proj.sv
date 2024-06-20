@@ -1,4 +1,5 @@
-// STARS STUDENTS: ADD YOUR DESIGN HERE
+// STARS STUDENTS: TAKE LOOK AT THIS SAMPLE PROJECT FOR REFERENCE
+
 // $Id: $
 // File name:   sample_team_proj.sv
 // Created:     5/23/2024
@@ -32,37 +33,41 @@
 module sample_team_proj (
     
     //These are your standard clock and nrst signals
-    input logic clk, nrst, // clock rate is 10 MHz
+    input logic clk, // clock rate is 10 MHz
+    input logic nrst, // active low reset
     
-    input logic en, //This signal is an enable signal for your chip. Your design should disable if this is low.
+    input logic en, // This signal is an enable signal for your chip. Your design should disable if this is low.
 
     // You can also have input registers controlled by the Caravel Harness's on chip processor
     input logic [13:0] prescaler,  // from Wishbone bus - controls period per pin in the sequence
-    output logic [0:0] done,  //Signal indicating last pin done
+    output logic [0:0] done,  // Signal indicating last pin done
     
     // Logic Analyzer - Grant access to all 128 LA
-    input wire [127:0] la_data_in,
-    output wire [127:0] la_data_out,
-    input wire [127:0] la_oenb,
+    input logic [127:0] la_data_in,
+    output logic [127:0] la_data_out,
+    input logic [127:0] la_oenb,
 
     // 34 out of 38 GPIOs (Note: if you need up to 38 GPIO, discuss with a TA)
-    input  wire [33:0] gpio_in, // Breakout Board Pins
-    output wire [33:0] gpio_out, // Breakout Board Pins
-    output wire [33:0] gpio_oeb // Active Low Output Enable
+    input  logic [33:0] gpio_in, // Breakout Board Pins
+    output logic [33:0] gpio_out, // Breakout Board Pins
+    output logic [33:0] gpio_oeb // Active Low Output Enable
 );
 
     // Internal signals
-    wire enable;
-    wire stop;
-
-    // Interfacing with LA
-    assign enable = ~la_oenb[0] & la_data_in[0];
-    assign stop = ~la_oenb[1] & la_data_in[1];
-    assign la_data_out = '0;
-
-    // Internal signals
+    logic enable;
+    logic stop;
     logic clk_pulse;
     logic [5:0] count;
+    logic [33:0] gpio;
+
+    // Interfacing with LA
+    assign enable = en & ~la_oenb[0] & la_data_in[0];
+    assign stop = en & ~la_oenb[1] & la_data_in[1];
+    assign la_data_out = '0;
+    
+    // Logic to enable and disable design outputs
+    assign gpio_out = en ? gpio : '0;
+    assign gpio_oeb = en ? '0 : '1;
 
     // Clock divider
     flex_counter #(.NUM_CNT_BITS(28)) clk_divider (

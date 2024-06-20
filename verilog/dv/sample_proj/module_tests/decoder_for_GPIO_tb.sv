@@ -1,12 +1,12 @@
 // $Id: $
-// File name:   tb_decoder_for_GPIO.sv
+// File name:   decoder_for_GPIO_tb.sv
 // Created:     05/25/2024
 // Author:      Abdulloh Abdubaev
 // Description: Testbench For Decoder
 
 `timescale 1ns / 10ps
 
-module tb_decoder_for_GPIO();
+module decoder_for_GPIO_tb();
     // Test Bench Signals
     logic [5:0] tb_in;
     logic [33:0] tb_out;
@@ -16,8 +16,9 @@ module tb_decoder_for_GPIO();
     logic [5:0] i;
 
     // Check output task
-    task check_output;
-        input logic [33:0] expected_out;
+    task check_output (
+        input logic [33:0] expected_out
+    );
     begin
         if (expected_out == tb_out) begin // Check passed
             $info("Correct GPIO output during test case %1d", tb_test_num);
@@ -34,7 +35,7 @@ module tb_decoder_for_GPIO();
 
     // Signal Dump
     initial begin
-        $dumpfile ("dump.vcd");
+        $dumpfile ("decoder_for_GPIO.vcd");
         $dumpvars;
     end
 

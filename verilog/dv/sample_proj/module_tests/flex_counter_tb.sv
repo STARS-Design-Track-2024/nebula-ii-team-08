@@ -1,12 +1,12 @@
 // $Id: $
-// File name:   tb_flex_counter.sv
+// File name:   flex_counter_tb.sv
 // Created:     5/25/2024
 // Author:      Miguel Isrrael Teran
 // Description: Test bench for flexible counter
 
 `timescale 1ns / 10ps
 
-module tb_flex_counter();
+module flex_counter_tb();
 
     // Define local parameters used by the test bench
     localparam  CLK_PERIOD = 10;
@@ -65,13 +65,15 @@ module tb_flex_counter();
     endtask
 
     // Task to cleanly and consistently check DUT output values
-    task check_outputs;
-        logic [NUM_BITS-1:0] expected_count_out;
-        logic expected_rollover_flag;
-        string check_tag;
+    task check_outputs(
+        input logic [NUM_BITS-1:0] expected_count_out,
+        input logic expected_rollover_flag,
+        input string check_tag
+    );
         logic count_correct;
         logic flag_correct;
     begin
+
         // NOTE: Make sure you check away from the positive edge!!!
         count_correct = 1'b0;
         flag_correct = 1'b0;
@@ -116,7 +118,7 @@ module tb_flex_counter();
     
     // Signal Dump
     initial begin
-        $dumpfile ("dump.vcd");
+        $dumpfile ("flex_counter.vcd");
         $dumpvars;
     end
     
@@ -155,8 +157,7 @@ module tb_flex_counter();
         #(CLK_PERIOD * 0.5);
 
         // Check that internal state was correctly reset
-        check_outputs({4{RESET_OUTPUT_VALUE}}, RESET_OUTPUT_VALUE,
-                    "after reset applied");
+        check_outputs({4{RESET_OUTPUT_VALUE}}, RESET_OUTPUT_VALUE, "after reset applied");
         
         // Check that the reset value is maintained during a clock cycle
         #(CLK_PERIOD);
