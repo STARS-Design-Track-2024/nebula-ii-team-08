@@ -2,6 +2,9 @@
 # Runing the simulations
 ##############################################################################
 
+BUILD = sim_build
+
+# Running simulations with iVerilog
 #g flag enables sv support
 %.vvp: %_tb.sv
 	iverilog -Ttyp -DFUNCTIONAL -DSIM -DUSE_POWER_PINS -DUNIT_DELAY=#1 \
@@ -12,6 +15,15 @@
 	vvp  $<
 	mv $@ RTL-$@
 	rm -f $<
+
+
+# Running simulations with VCS and DVE
+.PHONY: sim-%-source
+sim-%-source: %_tb.sv
+	mkdir -p ./$(BUILD)
+	vcs -sverilog -lca -debug_access+all -Mdir=$(BUILD)/csrc -o $(BUILD)/simv $< $(USER_PROJECT_VERILOG)/includes/includes.rtl.caravel_user_project
+	./$(BUILD)/simv -gui -suppress=ASLR_DETECTED_INFO &
+
 
 # ---- Clean ----
 clean:

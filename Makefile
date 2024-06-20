@@ -486,3 +486,17 @@ tb-module-%:
 	export USER_PROJECT_VERILOG=$(PWD)/verilog &&\
 	cd $(PWD)/verilog/dv/$(firstword $(subst -, ,$*))/module_tests &&\
 	make $(lastword $(subst -, ,$*)).vcd
+
+
+# Compilation and Simulation with Synopsys VCS
+# The testbenches must live within the dv/team_##/module_tests directory and will output there too
+# Example target: tbsim-sampl_proj-flex_counter-source
+.PHONY: tbsim-%-source
+tbsim-%-source:
+	@echo "\n------------"
+	@echo "Team Folder: $(firstword $(subst -, ,$*))"
+	@echo "Module Name: $(lastword $(subst -, ,$*))"
+	@echo "------------\n"
+	export USER_PROJECT_VERILOG=$(PWD)/verilog &&\
+	cd $(PWD)/verilog/dv/$(firstword $(subst -, ,$*))/module_tests &&\
+	make sim-$(lastword $(subst -, ,$*))-source
