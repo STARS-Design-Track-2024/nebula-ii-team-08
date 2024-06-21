@@ -24,7 +24,7 @@
 
 `define				WB_AW		16
 
-// `include			"wb_wrapper.vh"
+//`include			"wb_wrapper.vh"
 
 module la_control_WB (
 	`WB_SLAVE_PORTS,

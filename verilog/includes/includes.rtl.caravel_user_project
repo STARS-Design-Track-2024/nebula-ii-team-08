@@ -22,7 +22,7 @@
 
 # Wishbone Bus Wrap includes
 -v $(USER_PROJECT_VERILOG)/rtl/wb_wrapper.vh
-#-v $(USER_PROJECT_VERILOG)/dv/tb_macros.vh
+-v $(USER_PROJECT_VERILOG)/dv/tb_macros.vh
 #-v $(USER_PROJECT_VERILOG)/dv/wb_tasks.vh
 
 # GPIO Control
