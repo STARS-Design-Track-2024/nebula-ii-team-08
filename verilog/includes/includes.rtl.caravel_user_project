@@ -20,6 +20,11 @@
 #-v $(USER_PROJECT_VERILOG)/rtl/wb_interconnect.sv
 #-v $(USER_PROJECT_VERILOG)/rtl/wb_wrapper.vh
 
+# Wishbone Bus Wrap includes
+-v $(USER_PROJECT_VERILOG)/rtl/wb_wrapper.vh
+-v $(USER_PROJECT_VERILOG)/dv/tb_macros.vh
+#-v $(USER_PROJECT_VERILOG)/dv/wb_tasks.vh
+
 # GPIO Control
 #-v $(USER_PROJECT_VERILOG)/rtl/gpio_control/gpio_control_wb.v
 #-v $(USER_PROJECT_VERILOG)/rtl/gpio_control/gpio_control_wrapper.v
@@ -31,8 +36,8 @@
 #-v $(USER_PROJECT_VERILOG)/rtl/la_control/la_control.sv
 
 # Sample Team project
-#-v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/sample_team_proj_WB.v
 -v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/sample_team_proj_Wrapper.sv
+-v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/sample_team_proj_WB.v
 -v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/sample_team_proj.sv
 -v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/src/decoder_for_GPIO.sv
 -v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/src/flex_counter.sv
