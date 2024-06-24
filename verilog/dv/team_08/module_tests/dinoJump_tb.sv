@@ -1,5 +1,5 @@
 `timescale 10ns/1ns
-module tb_dinoJump;
+module dinoJump_tb;
 
     localparam CLK_PERIOD = 100; // 12 MHz 
     localparam RESET_ACTIVE = 0;
