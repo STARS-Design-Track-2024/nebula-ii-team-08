@@ -1,12 +1,7 @@
-
-
-
 // The purpose of this module is to allow the wishbone bus to control which design
-// is writing to the GPIO.  Each GPIO Pin will be able to be configured separately
-// this will allow for one design to control some GPIO and another design to control
-// other gpio
+// is interfacing with the LA
 
-module la_control_wrapper #(
+module la_control_Wrapper #(
     parameter NUM_TEAMS = 1
 )
 (
