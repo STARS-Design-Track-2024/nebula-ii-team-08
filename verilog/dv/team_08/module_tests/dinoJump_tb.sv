@@ -79,7 +79,7 @@ module dinoJump_tb;
 
     initial begin
         $dumpfile ("sim.vcd");
-        $dumpvars(0, tb);
+        $dumpvars(0, dinoJump_tb);
 
         // Initialize all test inputs
         #CLK_PERIOD;
@@ -91,11 +91,22 @@ module dinoJump_tb;
         tb_button = 1'b1;
         #CLK_PERIOD;
         tb_button = 1'b0;
-        #(5050000 * CLK_PERIOD);
+        #(6000000 * CLK_PERIOD);
         check_outputs(8'd181);
-        #(10000000 * CLK_PERIOD);
+        #(6000000 * CLK_PERIOD);
         check_outputs(8'd151);
+        #(3 * CLK_PERIOD);
 
+        tb_button = 1'b1;
+        #CLK_PERIOD;
+        tb_button = 1'b0;
+        #(3000000 * CLK_PERIOD);
+        tb_button = 1'b1;
+        #CLK_PERIOD;
+        tb_button = 1'b0;
+        #(3000000 * CLK_PERIOD);
+        check_outputs(8'd181);
+        
         $finish;
     end
 

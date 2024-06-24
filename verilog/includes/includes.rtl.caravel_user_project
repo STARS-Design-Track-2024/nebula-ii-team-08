@@ -41,3 +41,4 @@
 -v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/sample_team_proj.sv
 -v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/src/decoder_for_GPIO.sv
 -v $(USER_PROJECT_VERILOG)/rtl/sample_team_proj/src/flex_counter.sv
+-v $(USER_PROJECT_VERILOG)/rtl/team_projects/team_08/dinoJump.sv
