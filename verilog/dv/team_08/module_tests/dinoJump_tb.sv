@@ -1,5 +1,5 @@
 `timescale 10ns/1ns
-module dinoJump_tb;
+module tb;
 
     localparam CLK_PERIOD = 100; // 12 MHz 
     localparam RESET_ACTIVE = 0;
@@ -79,10 +79,9 @@ module dinoJump_tb;
 
     initial begin
         $dumpfile ("sim.vcd");
-        $dumpvars(0, dinoJump_tb);
-
-        // Initialize all test inputs
+        $dumpvars(0, tb);
         tb_button = 0;
+        // Initialize all test inputs
         #CLK_PERIOD;
 
         //reset
@@ -91,23 +90,24 @@ module dinoJump_tb;
 
         tb_button = 1'b1;
         #CLK_PERIOD;
-        tb_button = 1'b0;
+        //tb_button = 1'b0;
         #(6000000 * CLK_PERIOD);
         check_outputs(8'd181);
         #(6000000 * CLK_PERIOD);
         check_outputs(8'd151);
-        #(3 * CLK_PERIOD);
+        #(2000000 * CLK_PERIOD);
 
-        tb_button = 1'b1;
+        //tb_button = 1'b1;
         #CLK_PERIOD;
-        tb_button = 1'b0;
+        //tb_button = 1'b0;
         #(3000000 * CLK_PERIOD);
-        tb_button = 1'b1;
+        //tb_button = 1'b1;
         #CLK_PERIOD;
-        tb_button = 1'b0;
+        //tb_button = 1'b0;
         #(3000000 * CLK_PERIOD);
         check_outputs(8'd181);
-        
+        #(2000000 * CLK_PERIOD);
+
         $finish;
     end
 
