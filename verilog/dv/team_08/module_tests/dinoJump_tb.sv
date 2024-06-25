@@ -82,6 +82,7 @@ module dinoJump_tb;
         $dumpvars(0, dinoJump_tb);
 
         // Initialize all test inputs
+        tb_button = 0;
         #CLK_PERIOD;
 
         //reset
