@@ -19,7 +19,7 @@
 
 /* THIS FILE IS GENERATED, DO NOT EDIT */
 
-`timescale			1ns/1ps
+//`timescale			1ns/1ps
 `default_nettype	none
 
 `define				WB_AW		16
@@ -45,28 +45,28 @@ module gpio_control_WB (
 
 	`WB_CTRL_SIGNALS
 
-	wire [28-1:0]	pin_0to7_sel;
-	wire [28-1:0]	pin_8to15_sel;
-	wire [28-1:0]	pin_16to23_sel;
-	wire [28-1:0]	pin_24to31_sel;
+	wire [32-1:0]	pin_0to7_sel;
+	wire [32-1:0]	pin_8to15_sel;
+	wire [32-1:0]	pin_16to23_sel;
+	wire [32-1:0]	pin_24to31_sel;
 	wire [24-1:0]	pin_32to37_sel;
 
 	// Register Definitions
-	reg [27:0]	PIN_0TO7_SEL_VAL_REG;
+	reg [31:0]	PIN_0TO7_SEL_VAL_REG;
 	assign	pin_0to7_sel = PIN_0TO7_SEL_VAL_REG;
-	`WB_REG(PIN_0TO7_SEL_VAL_REG, 0, 28)
+	`WB_REG(PIN_0TO7_SEL_VAL_REG, 0, 32)
 
-	reg [27:0]	PIN_8TO15_SEL_VAL_REG;
+	reg [31:0]	PIN_8TO15_SEL_VAL_REG;
 	assign	pin_8to15_sel = PIN_8TO15_SEL_VAL_REG;
-	`WB_REG(PIN_8TO15_SEL_VAL_REG, 0, 28)
+	`WB_REG(PIN_8TO15_SEL_VAL_REG, 0, 32)
 
-	reg [27:0]	PIN_16TO23_SEL_VAL_REG;
+	reg [31:0]	PIN_16TO23_SEL_VAL_REG;
 	assign	pin_16to23_sel = PIN_16TO23_SEL_VAL_REG;
-	`WB_REG(PIN_16TO23_SEL_VAL_REG, 0, 28)
+	`WB_REG(PIN_16TO23_SEL_VAL_REG, 0, 32)
 
-	reg [27:0]	PIN_24TO731_SEL_VAL_REG;
+	reg [31:0]	PIN_24TO731_SEL_VAL_REG;
 	assign	pin_24to31_sel = PIN_24TO731_SEL_VAL_REG;
-	`WB_REG(PIN_24TO731_SEL_VAL_REG, 0, 28)
+	`WB_REG(PIN_24TO731_SEL_VAL_REG, 0, 32)
 
 	reg [23:0]	PIN_32TO37_SEL_VAL_REG;
 	assign	pin_32to37_sel = PIN_32TO37_SEL_VAL_REG;

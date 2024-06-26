@@ -501,9 +501,4 @@ tbsim-source-%:
 	cd $(PWD)/verilog/dv/$(firstword $(subst -, ,$*))/module_tests &&\
 	make sim-source-$(lastword $(subst -, ,$*))
 
-# Cleaning Temporary Files from Module Testbenches
-.PHONY: tb-clean-%
-tb-clean-%:
-	export USER_PROJECT_VERILOG=$(PWD)/verilog &&\
-	cd $(PWD)/verilog/dv/$*/module_tests &&\
-	make clean
+# FYI: Run 'make clean' to clean all temporary files produced by testbenches
