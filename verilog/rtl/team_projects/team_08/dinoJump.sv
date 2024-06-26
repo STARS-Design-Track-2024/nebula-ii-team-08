@@ -1,20 +1,21 @@
 module dinoJump( 
   input logic clk, nRst, button, 
-  output logic [7:0] dinoY 
+  output logic [7:0] dinoY,
+  output logic dinoJumpGood 
 ); 
 
-  logic [7:0] floorY = 8'd150; 
-  logic [7:0] onFloor = 8'd151; 
+  logic [7:0] floorY = 8'd100; 
+  logic [7:0] onFloor = 8'd101; 
   logic en, en2; 
 
   logic [20:0] count, next_count, dinoDelay, next_dinoDelay; 
   logic [7:0] v, next_v, next_dinoY;  
-  logic at_max, maxdinoDelay, wrap;  
+  logic at_max, maxdinoDelay;  
 
   always_ff @(posedge clk, negedge nRst) begin  
     if (~nRst) begin  
       v <= 8'd0;
-      dinoY <= 8'd151;  
+      dinoY <= 8'd101;  
     end  
 
     else begin  
@@ -55,7 +56,6 @@ module dinoJump(
 //counter for at max 2 based on button
 always_comb begin
     maxdinoDelay = 0;
-    wrap = 1;
 
     if(!button) begin
       next_dinoDelay = 0;
@@ -66,7 +66,7 @@ always_comb begin
       if(button) begin
         next_dinoDelay = dinoDelay + 1;
 
-        if(wrap && dinoDelay == 500000) begin
+        if(dinoDelay == 750000) begin
           next_dinoDelay = 0;
           maxdinoDelay = 1;
         end
@@ -88,6 +88,8 @@ always_comb begin
 
 end
 
+assign dinoJumpGood = en && maxdinoDelay;
+
 always_comb begin   
     next_count = 0;  
     at_max = 0;  
@@ -95,7 +97,7 @@ always_comb begin
     if(en && maxdinoDelay) begin
       next_count = 0;
     end
-    else if (count == 1000000) begin  
+    else if (count == 750000) begin  
       next_count = 0;  
       at_max = 1;  
     end 
@@ -104,8 +106,8 @@ always_comb begin
     end
 
     if(en && maxdinoDelay) begin 
-        next_v = 8'd8;
-        next_dinoY = dinoY + 10;
+        next_v = 8'd16;
+        next_dinoY = dinoY + 20;
     end 
     else if (at_max) begin 
       next_dinoY = dinoY + v; 
@@ -115,7 +117,7 @@ always_comb begin
       end
 
       else begin 
-        next_v = v - 2; 
+        next_v = v - 4; 
       end 
     end
 

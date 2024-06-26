@@ -90,23 +90,60 @@ module tb;
 
         tb_button = 1'b1;
         #CLK_PERIOD;
-        //tb_button = 1'b0;
-        #(6000000 * CLK_PERIOD);
-        check_outputs(8'd181);
-        #(6000000 * CLK_PERIOD);
-        check_outputs(8'd151);
-        #(2000000 * CLK_PERIOD);
+        tb_button = 1'b0;
+
+        #CLK_PERIOD;
+        tb_button = 1'b1;
+        #CLK_PERIOD;
+        tb_button = 1'b0;
+
+        #CLK_PERIOD;
+        tb_button = 1'b1;
+        #CLK_PERIOD;
+        tb_button = 1'b0;
+
+        #CLK_PERIOD;
+        tb_button = 1'b1;
+        #CLK_PERIOD;
+        tb_button = 1'b0;
+
+        #CLK_PERIOD;
+        tb_button = 1'b1;
+        #CLK_PERIOD;
+        tb_button = 1'b0;
+
+        #CLK_PERIOD;
+        tb_button = 1'b1;
+        #CLK_PERIOD;
+        tb_button = 1'b0;
+
+        #CLK_PERIOD;
+        tb_button = 1'b1;
+        #CLK_PERIOD;
+        tb_button = 1'b0;
+
+
+        #(15000000 * CLK_PERIOD);
+        check_outputs(8'd101);
+
+
+
+        //#(6000000 * CLK_PERIOD);
+        //check_outputs(8'd181);
+        //#(6000000 * CLK_PERIOD);
+        //check_outputs(8'd151);
+        //#(2000000 * CLK_PERIOD);
 
         //tb_button = 1'b1;
-        #CLK_PERIOD;
+        //#CLK_PERIOD;
         //tb_button = 1'b0;
-        #(3000000 * CLK_PERIOD);
+        //#(3000000 * CLK_PERIOD);
         //tb_button = 1'b1;
-        #CLK_PERIOD;
+        //#CLK_PERIOD;
         //tb_button = 1'b0;
-        #(3000000 * CLK_PERIOD);
-        check_outputs(8'd181);
-        #(2000000 * CLK_PERIOD);
+        //#(3000000 * CLK_PERIOD);
+        //check_outputs(8'd181);
+        //#(2000000 * CLK_PERIOD);
 
         $finish;
     end
