@@ -1,0 +1,520 @@
+`default_nettype none
+// Empty top module
+
+
+module top (
+  // I/O ports
+  input  logic hz100, reset,
+  input  logic [20:0] pb,
+  output logic [7:0] left, right,
+         ss7, ss6, ss5, ss4, ss3, ss2, ss1, ss0,
+  output logic red, green, blue,
+
+  // UART ports
+  output logic [7:0] txdata,
+  input  logic [7:0] rxdata,
+  output logic txclk, rxclk,
+  input  logic txready, rxready
+);
+ logic [3:0] sum1;
+ logic sum2;
+//ssdec display (.in(pb[3:0]), .enable(1'b1), .out({1'b0, ss7[6:0]}));
+  // ssdec display_1 (.in(pb[7:4]), .enable(1'b1), .out({1'b0, ss5[6:0]}));
+  // bcdadd1 add (.A(pb[3:0]), .B(pb[7:4]), .Cin(pb[8]), .S(sum1), .Cout(sum2));
+  // ssdec display2(.in(sum1), .enable(1'b1), .out(ss0[6:0]));
+  // ssdec display3(.in({3'b0,sum2}), .enable(1'b1), .out(ss1[6:0]));
+  // enc20to5 encoder (.in(pb[19:0]), .out(right[4:0]), .strobe(left[0]));
+ 
+  //REGISTER to push button, hold value in until next push and display binary and ssdec decimal value
+  /*
+  logic [7:0] test_reg, test_reg_n; // 7 bit variables to hold the next values of the reigisters
+  logic [4:0] out_synckey, right_n, test_right; // 4 bit variables to hold the outputs of the synckey, the next right output (lights), and the test of the right
+  logic out_strobe, strobe_n, test_strobe; // variables to represent and be used for the output of the strobe, the next strobe and the test strobe
+
+  synckey encoder2 (.clk(hz100), .rst(reset), .in(pb[19:0]), .out(out_synckey), .strobe (out_strobe));
+  // SYNCKEY ENCODER that takes the clock input as clock, the reset as reset, the in as the pushbutons, and then sets the out to the out of the synckey
+  //it sets it to the out_synckey to the value of out recieved from the synckey function/module , and it sets the out_strobe to the output of strobe 
+  always_comb begin
+    test_reg_n = {3'b0, out_synckey}; // Sets the next test register to three leading bits, and the 5 bit out synckey
+    strobe_n = out_strobe; // sets the next strobe to the out strobe,
+    right_n = out_synckey; // Sets the out synckey equal to the the next right lights
+  end
+
+  always_ff @ (posedge out_strobe, posedge reset) begin // getting two inputs on positive clock edge, of out_strobe and the resest
+    if (reset) begin
+      test_reg <= 8'b0; //if the reset it activated all 8 bits of the register are set to 0
+      test_strobe <= 1'b0; //if the reset it activated the one bit of strobe is set to 0
+      test_right <= 5'b0; ///if the reset it activated the 5 bits of the right lights are set to 0
+    end else begin
+      test_reg <= test_reg_n; // if the value is not reset, then the register is set tothe next test register (so the next button's pressed input become the new registers values)
+      test_strobe <= strobe_n; // if the value is not reset, the strobe becomes set to the next strobe value
+      test_right <= right_n; // if the value is not reset, the right strobe 5 bit value gets set to the 
+    end
+  end
+
+  always_comb begin
+    red = test_strobe; // sets the red value (middle light) equal to the test strobe value
+    right[4:0] = test_right; // sets the right 5 bit lights to the value of the test_right variable
+  end
+
+
+
+  ssdec disp (.in(test_reg[3:0]), .enable(1'b1), .out(ss0[7:0]));
+  ssdec disp1 (.in(test_reg[7:4]), .enable(1'b1), .out(ss1[7:0]));
+*/
+/*
+logic [3:0]state;
+logic [4:0] keyout;
+logic strobe, enable, strobeclock;
+logic [31:0] password;
+
+//assign green = (state == OPEN);
+ //assign red = (state == ALARM);
+
+assign enable = 1'b1;
+assign strobeclock = strobe & (pb[0]|pb[1]|pb[2]|pb[3]|pb[4]|pb[5]|pb[6]|pb[7]|pb[8]|pb[9]|pb[10]|pb[11]|pb[12]|pb[13]|pb[14]|pb[15]);
+synckey synckeyLock(.in(pb[19:0]), .clk(hz100), .rst(reset), .out(keyout), .strobe(strobe));
+ 
+sequence_sr registerbit(.in({1'b0, keyout[3:0]}), .Clk(strobeclock), .rst(reset), .out(password), .en(enable));
+ 
+//digitalLock lock(.clk(strobe), .rst(reset), .seq(password), .keyout(keyout), .state(state));
+ 
+display disp001(.in(password), .enable(enable),.ssX({ss7[7:0], ss6[7:0], ss5[7:0],ss4[7:0], ss3[7:0], ss2[7:0], ss1[7:0], ss0[7:0]}));
+
+
+*/
+
+endmodule
+
+//// Add more modules down here...
+module fa(
+ input  logic A , B ,Cin,
+ output logic S , Cout
+);
+
+  assign S = A ^ B ^ Cin  ;
+  assign Cout = ((A ^ B) & Cin | (A & B));
+
+endmodule
+
+module fa4(
+ input logic [3:0] A, B,
+ input logic Cin ,
+ output logic [3:0] S,
+ output logic Cout
+);
+  logic Cout_1, Cout_2, Cout_3;
+
+
+  fa phys (.A(A[0]), .B(B[0]), .Cin(Cin), .Cout(Cout_1), .S(S[0]));
+  fa phys1 (.A(A[1]), .B(B[1]), .Cin(Cout_1), .Cout(Cout_2), .S(S[1]));
+  fa phys2 (.A(A[2]), .B(B[2]), .Cin(Cout_2), .Cout(Cout_3), .S(S[2]));
+  fa phys3 (.A(A[3]), .B(B[3]), .Cin(Cout_3), .Cout(Cout), .S(S[3]));
+
+
+endmodule
+module bcdadd1(
+ input logic [3:0] A, B,
+ input logic Cin ,
+ output logic [3:0] S,
+ output logic Cout
+
+);
+ 
+  logic [3:0] temp;
+  logic over_nine, Cout_1;
+
+  fa4 fulladder (.A(A), .B(B), .Cin(Cin), .S(temp), .Cout(Cout_1));
+  assign over_nine = ((temp[3] & temp[2]) | (temp[3] & temp[1]) | Cout_1);
+  fa4 fulladder_1 (.A(temp), .B({1'b0, over_nine, over_nine, 1'b0}), .Cin(1'b0), .S(S), .Cout());
+  assign Cout = over_nine;
+  
+  
+endmodule
+
+module ssdec(
+  input logic [3:0] in,
+  input logic enable,
+  output logic [7:0] out
+  );
+  logic [6:0] out_temp;
+  
+  always_comb begin
+    case(in)
+      4'b0000: out_temp = 7'b000001000; // _ ground
+      4'b0001: out_temp = 7'b000000110; // l cactus
+     // 4'b0010: out_temp = 7'b1011011; //2
+      //4'b0011: out_temp = 7'b1001111; //3
+      //4'b0100: out_temp = 7'b1100110; //4
+     // 4'b0101: out_temp = 7'b1101101; //5
+     // 4'b0110: out_temp = 7'b1111101; //6
+     // 4'b0111: out_temp = 7'b0000111; //7
+    //  4'b1000: out_temp = 7'b1111111; //8
+     // 4'b1001: out_temp = 7'b1100111; //9
+
+    //  4'b1010: out_temp = 7'b1110111; //10 == A
+     // 4'b1011: out_temp = 7'b1111100; //11 == b
+    //  4'b1100: out_temp = 7'b0111001; //12 == C
+    //  4'b1101: out_temp = 7'b1011110; //13 == d
+    //  4'b1110: out_temp = 7'b1111001; //14 == E
+     // 4'b1111: out_temp = 7'b1110001; //15 == F
+
+      default: out_temp = 7'b0;
+    endcase
+  end
+  
+  assign out = out_temp * enable;
+
+
+endmodule
+
+
+
+module enc20to5(
+input logic [19:0] in,
+output logic [4:0] out,
+output logic strobe
+);
+
+logic[4:0]i;
+
+always_comb 
+begin
+  out = 0;
+  strobe = 0;
+
+  for ( i = 0; i < 20; i++)
+
+  if(in[i[4:0]])
+  out = i[4:0];
+
+  strobe = |in ; 
+
+end
+
+
+endmodule
+
+module synckey(
+input logic clk, rst,
+input logic [19:0] in,
+output logic [4:0] out,
+output logic strobe
+
+
+);
+logic Q , D , Q_next, Q1, Q_next_1;
+
+enc20to5 encoder(.in(in), .out(out), .strobe()); // function call to the encoder to run it
+
+// NEXT STATE LOGIC
+always_comb begin // sets things to be always true (locally)
+  D = |in;
+  Q_next = D;
+  Q_next_1 = Q;
+end
+
+always_ff @(posedge clk, posedge rst) begin 
+  if (rst) begin
+    Q <= 0;
+    Q1 <= 0;
+  end else begin
+    Q <= Q_next;
+    Q1 <= Q_next_1;
+  end
+end
+
+// OUTPUT LOGIC
+always_comb begin
+  strobe = Q1;
+end
+
+endmodule
+
+
+module DFF(   // Module to have a constant basic D flip flop avaliable to call
+
+input logic Data, Clk, Reset, S,
+output logic Q
+);
+
+always_ff @(posedge Clk , posedge S) 
+if(Reset)
+Q <= 0;
+else if (S)
+Q <= 1;
+else
+Q <= Data;
+
+endmodule
+
+
+module bit8register(  // used for test bench on lab 7 1.2
+input logic Clk, Reset, S ,
+input logic [7:0] Data,
+output logic [7:0] Q
+);
+
+DFF dff0(.Data(Data[0]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[0]));
+DFF dff1(.Data(Data[1]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[1]));
+DFF dff2(.Data(Data[2]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[2]));
+DFF dff3(.Data(Data[3]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[3]));
+DFF dff4(.Data(Data[4]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[4]));
+DFF dff5(.Data(Data[5]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[5]));
+DFF dff6(.Data(Data[6]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[6]));
+DFF dff7(.Data(Data[7]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[7]));
+//DFF dff8(.Data(Data[8]), .Clk(Clk), .Reset(Reset), .S(S), .Q(Q[8]));
+
+endmodule
+
+module digitalLock(
+input logic clk, rst, 
+input logic [4:0] keyout,
+input logic [31:0] seq,
+output logic [3:0] state
+);
+typedef enum logic [3:0]{
+    LS0 =0, LS1=1, LS2=2, LS3=3, LS4=4, LS5=5, LS6=6,LS7=7,
+    OPEN=8, ALARM=9, INIT=10
+} state_t;
+
+state_t next_state, current_state;
+
+always_comb begin
+  case(current_state)
+    //INIT: next_state = LS0; 
+    INIT: next_state = (16 == keyout) ? LS0 : INIT;
+    LS0: next_state = ({1'b0, seq[31:28]} == keyout) ? LS1 : ALARM;
+    LS1: next_state = ({1'b0, seq[27:24]} == keyout) ? LS2 : ALARM;
+    LS2: next_state = ({1'b0, seq[23:20]} == keyout) ? LS3 : ALARM;
+    LS3: next_state = ({1'b0, seq[19:16]} == keyout) ? LS4 : ALARM;
+    LS4: next_state = ({1'b0, seq[15:12]} == keyout) ? LS5 : ALARM;
+    LS5: next_state = ({1'b0, seq[11:8]} == keyout) ? LS6 : ALARM;
+    LS6: next_state = ({1'b0, seq[7:4]} == keyout) ? LS7 : ALARM;
+    LS7: next_state = ({1'b0, seq[3:0]} == keyout) ? OPEN : ALARM;
+    OPEN: next_state = OPEN;
+    default: next_state = ALARM;
+  endcase
+  state = current_state;
+end
+
+always_ff @(posedge clk, posedge rst) begin
+    if(rst) begin
+        current_state <= INIT;
+    end else begin
+        current_state <= next_state;
+    end
+end
+
+endmodule
+
+
+module bit4register(
+
+input logic Clk, R, enable,
+input logic [4:0] Data,
+output logic [3:0] Q
+);
+
+DFFen dff0(.Data(Data[0]), .Clk(Clk), .enable(enable), .R(R) ,.Q(Q[0]));
+DFFen dff1(.Data(Data[1]), .Clk(Clk), .enable(enable), .R(R) ,.Q(Q[1]));
+DFFen dff2(.Data(Data[2]), .Clk(Clk), .enable(enable), .R(R) ,.Q(Q[2]));
+DFFen dff3(.Data(Data[3]), .Clk(Clk), .enable(enable), .R(R) ,.Q(Q[3]));
+
+
+endmodule
+
+
+module DFFen(
+
+input logic Data, enable , R, Clk, 
+output logic Q
+);
+
+always_ff @(posedge (enable & Clk), posedge (R))
+if (R) begin
+  Q <= Q;
+end else begin
+  Q <= Data;
+end
+
+endmodule
+
+module sequence_sr(
+input logic Clk, rst, en,
+input logic [4:0] in,
+output logic [31:0] out
+);
+
+
+bit4register fourBR0 ( .Data(in),.Clk(Clk),.enable(en), .R(rst), .Q(out[3:0]));
+bit4register fourBR1 ( .Data({1'b0, out[3:0]}),.Clk(Clk),.enable(en), .R(rst), .Q(out[7:4]));
+bit4register fourBR2 ( .Data({1'b0, out[7:4]}),.Clk(Clk),.enable(en), .R(rst), .Q(out[11:8]));
+bit4register fourBR3 ( .Data({1'b0, out[11:8]}),.Clk(Clk),.enable(en), .R(rst), .Q(out[15:12]));
+bit4register fourBR4 ( .Data({1'b0, out[15:12]}),.Clk(Clk),.enable(en), .R(rst), .Q(out[19:16]));
+bit4register fourBR5 ( .Data({1'b0, out[19:16]}),.Clk(Clk),.enable(en), .R(rst), .Q(out[23:20]));
+bit4register fourBR6 ( .Data({1'b0, out[23:20]}),.Clk(Clk),.enable(en), .R(rst), .Q(out[27:24]));
+bit4register fourBR7 ( .Data({1'b0, out[27:24]}),.Clk(Clk),.enable(en), .R(rst), .Q(out[31:28]));
+
+endmodule
+
+
+module display (
+
+input logic [31:0] in ,
+input logic enable, 
+output logic [63:0] ssX
+);
+
+ssdec dis0 (.in(in[3:0]), .out(ssX[7:0]), .enable(enable));
+ssdec dis1 (.in(in[7:4]), .out(ssX[15:8]), .enable(enable));
+ssdec dis2 (.in(in[11:8]), .out(ssX[23:16]), .enable(enable));
+ssdec dis3 (.in(in[15:12]), .out(ssX[31:24]), .enable(enable));
+ssdec dis4 (.in(in[19:16]), .out(ssX[39:32]), .enable(enable));
+ssdec dis5 (.in(in[23:20]), .out(ssX[47:40]), .enable(enable));
+ssdec dis6 (.in(in[27:24]), .out(ssX[55:48]), .enable(enable));
+ssdec dis7 (.in(in[31:28]), .out(ssX[63:56]), .enable(enable));
+
+
+endmodule
+
+
+
+
+module cactusMove(
+input logic clk, nRst, enable, rng, gameclk,
+input logic [1:0] rng_input,
+output logic [7:0] x_distance, //distance between pixels
+output logic [8:0] pixel, 
+//col1, col2,row1,row2, 
+output logic cactus_out
+);
+
+logic [8:0] n_pixel;
+logic [1:0]  x;
+logic slw_clk;
+logic [31:0]n_count, count, max_i;
+logic atmax;
+
+//assign enable = 1;
+assign max_i = 60000;
+
+always_ff @(posedge clk, negedge nRst) begin
+  if(!nRst)
+    count <= 0;
+  else
+    count <= n_count;
+end
+
+always_comb begin
+  n_count = count;
+  atmax = 0;
+  if (enable) begin
+    n_count = count + 1;
+   if (count == max_i)
+      n_count = 0;
+  end
+  if (count == max_i) begin
+    atmax = 1;
+  end else
+    atmax = 0;
+end
+// tracking second cactus 
+always_ff @(posedge clk, negedge nRst) begin
+  if (!nRst) begin
+    pixel <= 360;
+end else begin
+    pixel <= n_pixel;
+end
+end
+
+always_comb begin
+  n_pixel = pixel;
+  if (atmax)
+    if (pixel > 0) begin
+    n_pixel = pixel - 1;
+    end else begin
+    n_pixel = 360;
+    end
+  
+end
+
+// Way to generate the two cacti with random pixel distance between them
+// Takes input from game clock so that the speed increments accordingly
+// Will give direct call to the draw_box function
+//Takes RNG input (0,1,2 or 3) and assigns incriments of distance 10 pixels for each (if 0, distance = 10 pixels, if 1 pixel distance = 20 pixels , etc)
+
+//logic [7:0] x_distance; //distance between pixels
+logic [8:0] cactus_w, cactus_h;
+logic count2, n_count2;
+
+
+assign cactus_w = 5;
+assign cactus_h = 5;
+
+always_ff @(negedge nRst, posedge gameclk)begin
+if (~nRst) begin 
+count2 <= 0;
+end else begin
+  count2 <= n_count2;
+end
+end
+ 
+always_comb begin
+        case (rng_input)
+            2'b00: x_distance = 10;  // 10 pixels
+            2'b01: x_distance = 20; // 20 pixels
+            2'b10: x_distance = 30; // 30 pixels
+            2'b11: x_distance = 40; // 40 pixels
+            default: x_distance = 10; // Default to 10 pixels 
+        endcase
+
+      //col1 = 300 + cactus_w;
+      //row1 = 151 + cactus_h;
+      //col2 = col1 + x_distance;
+      //row2 = row1;
+    end
+
+always_comb begin
+//draw_box(.col1(col1), .row1(row1));
+//wait
+//draw_box(.col2(col2), .row2(row2));
+end
+
+
+endmodule
+
+
+module syncEdge (
+input logic R, clk,
+output logic button_push, Edge, sig_o, sig_i
+);
+
+logic sig_n, rising_edge, falling_edge;
+
+always_ff @(negedge R, posedge clk) begin
+if (R == 0)begin
+sig_i <=0;
+end else begin
+  sig_n <= sig_i;
+end
+end
+
+always_ff @(negedge R, posedge clk)begin
+if (R == 0)begin
+  rising_edge <=0;
+end else begin
+ rising_edge <= sig_n;
+end
+end
+
+always_ff @(negedge R, posedge clk)begin
+if(R == 0)begin
+falling_edge <=0;
+end else begin
+  falling_edge <= rising_edge;
+end
+button_push = rising_edge && !falling_edge;
+end
+
+endmodule
