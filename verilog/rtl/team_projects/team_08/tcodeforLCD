@@ -1,0 +1,205 @@
+module tft_set_block( 
+
+input logic clk, 
+input logic rst, 
+output logic cs, 
+output logic cd, 
+output logic wr, 
+output logic rd, 
+output logic [7:0] data 
+
+); 
+typedef enum logic [3:0] { 
+
+INIT = 0, 
+SET_COLUMN_ADDR, 
+SET_COLUMN_DATA, 
+SET_ROW_ADDR, 
+SET_ROW_DATA, 
+MEMORY_WRITE, 
+WRITE_PIXEL, 
+DONE 
+
+} state_t; 
+
+
+state_t state; 
+logic [7:0] x_start, x_end, y_start, y_end; 
+logic [7:0] current_x, current_y; 
+logic [15:0] color; 
+// Declare additional variables for pixel coordinates
+logic [7:0] current_i, current_j;
+logic [1:0] pixel_state; // State variable to control pixel write sequence
+
+initial begin 
+
+x_start = 8'd20; //Make an input inti the function
+x_end = 8'd40; //Make an input inti the function
+y_start = 8'd50; //Make an input inti the function
+y_end = 8'd70; //Make an input inti the function
+color = 16'h0000; //Make an input inti the function
+state = INIT; 
+current_i = x_start;
+current_j = y_start;
+pixel_state = 2'b00; // Initialize pixel state machine
+
+end 
+
+
+always_ff @(posedge clk or posedge rst) begin 
+
+if (rst) begin 
+
+state <= INIT; 
+cs <= 1; 
+cd <= 1; 
+wr <= 1; 
+rd <= 1; 
+data <= 8'b0; 
+current_x <= x_start; 
+current_y <= y_start; 
+
+end else begin 
+
+case (state) 
+
+INIT: begin 
+
+state <= SET_COLUMN_ADDR; 
+
+end 
+
+SET_COLUMN_ADDR: begin 
+
+cs <= 0; 
+cd <= 0; 
+wr <= 0; 
+rd <= 1; 
+data <= 8'h2A; // Column Address Set command 
+state <= SET_COLUMN_DATA; 
+
+end 
+
+SET_COLUMN_DATA: begin 
+
+wr <= 1; 
+cd <= 1; 
+data <= 8'h00; // Start address high byte 
+wr <= 0; 
+wr <= 1; 
+data <= x_start; // Start address low byte 
+wr <= 0; 
+wr <= 1; 
+data <= 8'h00; // End address high byte 
+wr <= 0; 
+wr <= 1; 
+data <= x_end; // End address low byte 
+
+wr <= 0; 
+state <= SET_ROW_ADDR; 
+
+end 
+
+SET_ROW_ADDR: begin 
+
+cs <= 1; 
+cd <= 0; 
+wr <= 0; 
+rd <= 1; 
+data <= 8'h2B; // Row Address Set command 
+state <= SET_ROW_DATA; 
+
+end 
+
+SET_ROW_DATA: begin 
+
+wr <= 1; 
+cd <= 1; 
+data <= 8'h00; // Start address high byte 
+wr <= 0; 
+wr <= 1; 
+data <= y_start; // Start address low byte 
+wr <= 0; 
+wr <= 1; 
+data <= 8'h00; // End address high byte 
+wr <= 0; 
+wr <= 1; 
+data <= y_end; // End address low byte 
+wr <= 0; 
+state <= MEMORY_WRITE; 
+
+end 
+
+MEMORY_WRITE: begin 
+
+cs <= 1; 
+cd <= 0; 
+wr <= 0; 
+rd <= 1; 
+data <= 8'h2C; // Memory Write command 
+state <= WRITE_PIXEL; 
+
+end 
+
+WRITE_PIXEL: begin
+
+case (pixel_state)
+2'b00: begin // Initialize pixel write
+cs <= 0;
+cd <= 1;
+wr <= 0;
+rd<= 1;
+data <= color[15:8]; // High byte of color
+pixel_state <= 2'b01;
+state <= WRITE_PIXEL;
+end
+2'b01: begin // Write low byte of color
+wr <= 1;
+data <= color[7:0]; // Low byte of color
+pixel_state <= 2'b10;
+state <= WRITE_PIXEL;
+end
+2'b10: begin // Increment current_j and check bounds
+wr <= 0;
+if(current_j < y_end) begin
+current_j <= current_j + 1;
+pixel_state <= 2'b00;
+end else begin
+current_j <= y_start; // Reset current_j for next row
+pixel_state <= 2'b11;
+end
+state <= WRITE_PIXEL;
+end
+2'b11: begin // Increment current_i and check bounds
+if (current_i < x_end) begin
+current_i <= current_i + 1;
+pixel_state <= 2'b00; // Return to writing pixel
+end else begin
+// All pixels written, go to DONE state
+pixel_state <= 2'b00;
+cs <= 1;
+cd <= 1;
+wr <= 1;
+rd<= 1;
+state <= DONE;
+end
+end
+endcase
+end
+//
+DONE: begin 
+
+cs <= 1; 
+
+cd <= 1; 
+
+wr <= 1; 
+rd <= 1; 
+
+state <= INIT; // Restart the process or move to the next task 
+
+end 
+endcase 
+end 
+end 
+endmodule 
